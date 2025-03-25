@@ -5,4 +5,5 @@ all:
 	git push
 
 cp:
+	git pull
 	cp -r ~/travel-guide/* ~/htdocs
