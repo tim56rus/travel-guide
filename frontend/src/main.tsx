@@ -1,10 +1,14 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
+import App from './App'
+// npm install bootstrap
+import 'bootstrap/dist/css/bootstrap.min.css'
 
-createRoot(document.getElementById('root')!).render(
+// Ensure the element is not null with a type assertion
+const rootElement = document.getElementById('root') as HTMLElement
+
+createRoot(rootElement).render(
   <StrictMode>
     <App />
-  </StrictMode>,
+  </StrictMode>
 )
