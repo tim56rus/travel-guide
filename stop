@@ -1,0 +1,36 @@
+#!/bin/bash
+# This script kills the processes using their PIDs and then deletes the RUNNING folder.
+
+# Kill the npm run dev process if its PID file exists and process is running.
+if [ -f RUNNING/frontend_dev.pid ]; then
+  pid_frontend=$(cat RUNNING/frontend_dev.pid)
+  if kill -0 "$pid_frontend" 2>/dev/null; then
+    echo "Killing npm run dev process with PID $pid_frontend"
+    kill "$pid_frontend"
+    # Give the process a moment to terminate gracefully.
+    sleep 1
+    # For a forceful termination if needed (optional).
+    kill -9 "$pid_frontend" 2>/dev/null
+  else
+    echo "No running process found for npm run dev with PID $pid_frontend."
+  fi
+fi
+
+# Kill the npm start process if its PID file exists and process is running.
+if [ -f RUNNING/start.pid ]; then
+  pid_start=$(cat RUNNING/start.pid)
+  if kill -0 "$pid_start" 2>/dev/null; then
+    echo "Killing npm start process with PID $pid_start"
+    kill "$pid_start"
+    sleep 1
+    kill -9 "$pid_start" 2>/dev/null
+  else
+    echo "No running process found for npm start with PID $pid_start."
+  fi
+fi 
+
+# Delete the RUNNING folder.
+if [ -d RUNNING ]; then
+  rm -r RUNNING
+  echo "Deleted the RUNNING folder."
+fi

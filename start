@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Check if the RUNNING folder exists. If it does, inform the user and exit.
+if [ -d RUNNING ]; then
+	echo "The RUNNING folder already exists. It appears the processes may already be running or haven't been cleaned up."
+	exit 1
+fi
+
+# Create the RUNNING folder if it doesn't exist.
+mkdir -p RUNNING
+
+# ----------------------------------------
+# Start "npm run dev" in the ./frontend folder.
+pushd frontend > /dev/null
+npm run dev > ../frontend_dev.log 2>&1 &
+pid_frontend=$!
+popd > /dev/null
+# Save the PID in the RUNNING folder.
+echo "$pid_frontend" > RUNNING/frontend_dev.pid
+
+# ----------------------------------------
+# Start "npm start" in the current directory.
+npm start > start.log 2>&1 &
+pid_start=$!
+# Save the PID in the RUNNING folder.
+echo "$pid_start" > RUNNING/start.pid
+
+# Disown the background processes so that they continue even if the terminal is closed.
+disown -a
