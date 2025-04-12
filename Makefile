@@ -4,6 +4,10 @@ all:
 	git commit
 	git push
 
-cp:
+update:
 	git pull
-	cp -r ~/travel-guide/* ~/htdocs
+
+pull:
+	git pull
+
+
