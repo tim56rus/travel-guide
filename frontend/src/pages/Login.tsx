@@ -26,7 +26,7 @@ function Login(): JSX.Element {
         {error && <div className="alert alert-danger">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label className="form-label text-start w-100">Email:</label>
+            <label className="form-label text-start w-100">Email or Username:</label>
             <input
               type="email"
               className="form-control"
