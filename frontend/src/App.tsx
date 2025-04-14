@@ -8,7 +8,7 @@ import Signup from './pages/Signup'
 import Account from './pages/Account'
 
 
-function App(): JSX.Element {
+function App(){
   const [count, setCount] = useState<number>(0)
 
   return (
