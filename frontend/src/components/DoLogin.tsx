@@ -14,7 +14,7 @@ function DoLogin() {
     const payload = { login, password };
 
     try {
-      const response = await fetch("https://mern.nosikcompsci.com/api/login", {
+      const response = await fetch("https://lp.poosdisfun.xyz/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

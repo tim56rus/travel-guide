@@ -25,7 +25,7 @@ function DoSignup() {
     const payload = { firstName, lastName, username, email, password };
 
     try {
-      const response = await fetch("https://mern.nosikcompsci.com/api/signup", {
+      const response = await fetch("https://lp.poosdisfun.xyz/api/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

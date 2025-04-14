@@ -12,7 +12,7 @@ client.connect();
 const app = express();
 app.use(
   cors({
-    origin: "https://mern.nosikcompsci.com",
+    origin: "https://lp.poosdisfun.xyz",
     credentials: true,
   })
 );

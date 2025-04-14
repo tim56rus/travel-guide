@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import TripCard from '../components/TripCard';
-import './TripsGrid.css';
+import '../css/TripsGrid.css';
 
 
 function TripsGrid() {
