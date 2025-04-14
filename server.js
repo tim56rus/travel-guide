@@ -18,7 +18,7 @@ app.use(
 );
 app.use(bodyParser.json());
 
-// Set up CORS headers
+// set up CORS headers
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -45,10 +45,14 @@ app.post("/api/login", async (req, res) => {
     const db = client.db("TravelGuide");
 
     // find user with matching username/email and password
+    // regex for case-insensitive matching on username/email
     const results = await db
       .collection("Users")
       .find({
-        $or: [{ Username: login }, { Email: login }],
+        $or: [
+          { Username: { $regex: new RegExp(`^${login}$`, "i") } },
+          { Email: { $regex: new RegExp(`^${login}$`, "i") } },
+        ],
         Password: password,
       })
       .toArray();
@@ -96,25 +100,38 @@ app.post("/api/signup", async (req, res) => {
   // destructure fields from the sign up form
   const { firstName, lastName, username, email, password } = req.body;
 
+  // helper function to convert strings to Title Case
+  const toTitleCase = (str) => {
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
   try {
     // connect to the "TravelGuide" db
     const db = client.db("TravelGuide");
 
     // check if the username or email already exists
-    const existingUser = await db
-      .collection("Users")
-      .findOne({ $or: [{ Username: username }, { Email: email }] });
+    const existingUser = await db.collection("Users").findOne({
+      $or: [
+        { Username: { $regex: new RegExp(`^${username}$`, "i") } },
+        { Email: { $regex: new RegExp(`^${email}$`, "i") } },
+      ],
+    });
 
     if (existingUser) {
       // if user found, set error message
       error = "Username or Email already exists.";
     } else {
       // otherwise, create a new user
+      // convert firstName and lastName to title case, email to lower case
       const newUser = {
-        FirstName: firstName,
-        LastName: lastName,
+        FirstName: toTitleCase(firstName),
+        LastName: toTitleCase(lastName),
         Username: username,
-        Email: email,
+        Email: email.toLowerCase(),
         Password: password,
       };
 
@@ -134,7 +151,7 @@ app.post("/api/signup", async (req, res) => {
   }
 });
 
-// Start the Express server on port 5000
+// start the express server on port 5000
 app.listen(5000, () => {
   console.log("Server running on port 5000");
 });
