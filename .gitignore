@@ -2,3 +2,4 @@ start.log
 frontend_dev.log
 RUNNING/
 .DS_Store
+.vscode
