@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import logo from "../assets/WanderImg.png";
 
 function Account() {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmNewPassword, setConfirmNewPassword] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [profilePicture, setProfilePicture] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleted, setDeleted] = useState(false);
@@ -19,21 +20,21 @@ function Account() {
     e.preventDefault();
 
     if (newPassword !== confirmNewPassword) {
-      setError('New passwords do not match');
-      setSuccess('');
+      setError("New passwords do not match");
+      setSuccess("");
       return;
     }
 
-    setError('');
-    setSuccess('User details updated successfully!');
+    setError("");
+    setSuccess("User details updated successfully!");
 
-    setFirstName('');
-    setLastName('');
-    setUsername('');
-    setEmail('');
-    setPassword('');
-    setNewPassword('');
-    setConfirmNewPassword('');
+    setFirstName("");
+    setLastName("");
+    setUsername("");
+    setEmail("");
+    setPassword("");
+    setNewPassword("");
+    setConfirmNewPassword("");
   };
 
   const handleProfilePictureChange = (e) => {
@@ -50,8 +51,8 @@ function Account() {
   const confirmDeleteAccount = () => {
     setDeleted(true);
     setShowDeleteConfirm(false);
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
   };
 
   const cancelDeleteAccount = () => {
@@ -62,50 +63,16 @@ function Account() {
     <div className="d-flex justify-content-center align-items-center vh-100">
       <div
         className="card shadow p-4"
-        style={{ width: '100%', maxWidth: '600px', backgroundColor: '#F6F1DE' }}
+        style={{ width: "100%", maxWidth: "600px", backgroundColor: "#F6F1DE" }}
       >
-        <div className="text-center mb-4">
-          {profilePicture ? (
-            <img
-              src={profilePicture}
-              alt="Profile"
-              className="rounded-circle mb-2"
-              style={{
-                width: '120px',
-                height: '120px',
-                objectFit: 'cover',
-                border: '3px solid #8AB2A6',
-              }}
-            />
-          ) : (
-            <div
-              className="rounded-circle mb-2 d-flex justify-content-center align-items-center"
-              style={{
-                width: '120px',
-                height: '120px',
-                border: '3px dashed #8AB2A6',
-                backgroundColor: '#f0f0f0',
-                fontSize: '32px',
-                color: '#8AB2A6',
-                cursor: 'pointer',
-                margin: '0 auto',
-              }}
-              onClick={() => document.getElementById('profilePicInput').click()}
-            >
-              +
-            </div>
-          )}
-
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleProfilePictureChange}
-            style={{ display: 'none' }}
-            id="profilePicInput"
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <h2 className="mb-0">User Management</h2>
+          <img
+            src={logo}
+            alt="Logo"
+            style={{ maxWidth: "70px", height: "auto" }}
           />
         </div>
-
-        <h2 className="text-center mb-4">User Management</h2>
 
         {error && <div className="alert alert-danger">{error}</div>}
         {success && <div className="alert alert-success">{success}</div>}
@@ -134,84 +101,140 @@ function Account() {
         )}
 
         <form onSubmit={handleUpdate}>
-          <div className="mb-3">
-            <label className="form-label text-start w-100">First Name:</label>
-            <input
-              type="text"
-              className="form-control custom-input"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-            />
+          <div className="row">
+            <div className="mb-3 col-md-6 text-center">
+              {profilePicture ? (
+                <img
+                  src={profilePicture}
+                  alt="Profile"
+                  className="rounded-circle mb-2"
+                  style={{
+                    width: "100px",
+                    height: "100px",
+                    objectFit: "cover",
+                    border: "3px solid #8AB2A6",
+                  }}
+                />
+              ) : (
+                <div
+                  className="rounded-circle mb-2 d-flex justify-content-center align-items-center"
+                  style={{
+                    width: "100px",
+                    height: "100px",
+                    border: "3px dashed #8AB2A6",
+                    backgroundColor: "#f0f0f0",
+                    fontSize: "32px",
+                    color: "#8AB2A6",
+                    cursor: "pointer",
+                    margin: "0 auto",
+                  }}
+                  onClick={() =>
+                    document.getElementById("profilePicInput").click()
+                  }
+                >
+                  +
+                </div>
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleProfilePictureChange}
+                style={{ display: "none" }}
+                id="profilePicInput"
+              />
+            </div>
+
+            <div className="mb-3 col-md-6">
+              <label className="form-label text-start w-100">Username:</label>
+              <input
+                type="text"
+                className="form-control custom-input"
+                value={firstName}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
+            </div>
           </div>
 
-          <div className="mb-3">
-            <label className="form-label text-start w-100">Last Name:</label>
-            <input
-              type="text"
-              className="form-control custom-input"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-            />
+          <div className="row">
+            <div className="mb-3 col-md-6">
+              <label className="form-label text-start w-100">First Name:</label>
+              <input
+                type="text"
+                className="form-control custom-input"
+                value={lastName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="mb-3 col-md-6">
+              <label className="form-label text-start w-100">Last Name:</label>
+              <input
+                type="text"
+                className="form-control custom-input"
+                value={username}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+              />
+            </div>
           </div>
 
-          <div className="mb-3">
-            <label className="form-label text-start w-100">Username:</label>
-            <input
-              type="text"
-              className="form-control custom-input"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
+          <div className="row">
+            <div className="mb-3 col-md-6">
+              <label className="form-label text-start w-100">Email:</label>
+              <input
+                type="email"
+                className="form-control custom-input"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="mb-3 col-md-6">
+              <label className="form-label text-start w-100">
+                Current Password:
+              </label>
+              <input
+                type="password"
+                className="form-control custom-input"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
           </div>
 
-          <div className="mb-3">
-            <label className="form-label text-start w-100">Email:</label>
-            <input
-              type="email"
-              className="form-control custom-input"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
+          <div className="row">
+            <div className="mb-3 col-md-6">
+              <label className="form-label text-start w-100">
+                New Password:
+              </label>
+              <input
+                type="password"
+                className="form-control custom-input"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+            </div>
 
-          <div className="mb-3">
-            <label className="form-label text-start w-100">
-              Current Password:
-            </label>
-            <input
-              type="password"
-              className="form-control custom-input"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-
-          <div className="mb-3">
-            <label className="form-label text-start w-100">New Password:</label>
-            <input
-              type="password"
-              className="form-control custom-input"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
-          </div>
-
-          <div className="mb-3">
-            <label className="form-label text-start w-100">
-              Confirm New Password:
-            </label>
-            <input
-              type="password"
-              className="form-control custom-input"
-              value={confirmNewPassword}
-              onChange={(e) => setConfirmNewPassword(e.target.value)}
-            />
+            <div className="mb-3 col-md-6">
+              <label className="form-label text-start w-100">
+                Confirm New Password:
+              </label>
+              <input
+                type="password"
+                className="form-control custom-input"
+                value={confirmNewPassword}
+                onChange={(e) => setConfirmNewPassword(e.target.value)}
+              />
+            </div>
           </div>
 
           <button
             type="submit"
             className="btn w-100 mb-2"
-            style={{ backgroundColor: '#8AB2A6', color: 'white' }}
+            style={{ backgroundColor: "#8AB2A6", color: "white" }}
           >
             Update Information
           </button>
@@ -219,7 +242,7 @@ function Account() {
           <button
             type="button"
             className="btn w-100"
-            style={{ backgroundColor: '#c44c4c', color: 'white' }}
+            style={{ backgroundColor: "#c44c4c", color: "white" }}
             onClick={handleDeleteAccount}
           >
             Delete Account
@@ -227,7 +250,7 @@ function Account() {
         </form>
 
         <p className="text-center mt-3">
-          Back to <Link to="/Dashboard">Main Page</Link>
+          Back to <Link to="/MyTripsPage">Main Page</Link>
         </p>
       </div>
     </div>
