@@ -1,5 +1,6 @@
 import { useState, FormEvent, ChangeEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import logo from '../assets/WanderLogo.png'
 
 function DoSignup() {
   const [firstName, setFirstName] = useState<string>("");
@@ -56,6 +57,13 @@ function DoSignup() {
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100">
+      <div className="text-center mb-4">
+        <img
+          src={logo}
+          alt="Logo"
+          style={{ maxWidth: '300px', height: 'auto' }}
+        />
+      </div>
       <div
         className="card shadow p-4"
         style={{ width: "100%", maxWidth: "500px", backgroundColor: "#F6F1DE" }}
