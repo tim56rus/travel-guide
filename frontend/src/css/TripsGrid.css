@@ -1,16 +1,9 @@
 #addCardBtn:hover {
-  /* -webkit-box-shadow: 10px 10px 5px 0px rgba(145,139,145,0.16);
-  -moz-box-shadow: 10px 10px 5px 0px rgba(145,139,145,0.16);
-  box-shadow: 10px 10px 5px 0px rgba(145,139,145,0.16); */
   box-shadow: rgba(0, 0, 0, .3) 2px 8px 8px -5px;
   transform: translate3d(0, 2px, 0);
 }
 
 #addCardBtn:active {
   box-shadow: rgba(0, 0, 0, .3) 2px 8px 4px -6px;
-}
-
-.card-deck {
-  
 }
 
