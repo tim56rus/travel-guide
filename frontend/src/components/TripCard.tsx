@@ -1,8 +1,11 @@
 import '../css/TripCard.css';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 function TripCard() {
   const navigate = useNavigate();
+  const [showConfirm, setShowConfirm] = useState(false);
+
   return(
     // individual trip card 
     <div className="card h-100 overflow-hidden position-relative"
@@ -12,7 +15,7 @@ function TripCard() {
     borderRadius: '5px',
     width: '200px', height: '250px', aspectRatio: '4 / 3'
     }}
-    onClick={() => navigate(`/TripDetails/${tripId}`)}
+    onClick={() => !showConfirm && navigate(`/TripDetails/`)}
     >
 
       {/* Delete Button */}
@@ -21,10 +24,23 @@ function TripCard() {
       //onClick={() => handleDelete(tripId)}
       onClick={(e) => {
         e.stopPropagation(); // prevents navigation
+        setShowConfirm(true);
       }}
       >
         <i className="fa-regular fa-trash-can fa-lg" style={{color: '#c31313'}}></i>
       </button>
+
+      {/* Delete Confirmation Overlay */}
+      {showConfirm && (
+        <div
+          className="confirm-overlay"
+          onClick={(e) => e.stopPropagation()} 
+        >
+          <p>Delete this trip?</p>
+          <button className="btn delete-confirm btn-danger btn-sm">Yes</button>
+          <button  className="btn delete-confirm btn-secondary btn-sm" onClick={() => setShowConfirm(false)}>No</button>
+        </div>
+      )}
     
       {/* img part of card */}
       <div style={{ flex: '2 0 0' }}>
