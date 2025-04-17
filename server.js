@@ -244,6 +244,35 @@ app.put("/api/account/update", async (req, res) => {
     return res.status(200).json({ error: e.toString(), success: "" });
   }
 });
+
+//=====================POPULATE===================
+// ===== Populating API: Get user account data ===== //
+app.get("/api/account/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const db = client.db("TravelGuide");
+    const user = await db.collection("Users").findOne({ _id: new ObjectId(userId) });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    // Prepare user data without sensitive fields like password
+    const userData = {
+      userId: user._id,
+      username: user.Username,
+      email: user.Email,
+      firstName: user.FirstName,
+      lastName: user.LastName,
+    };
+
+    res.status(200).json({ error: "", data: userData });
+  } catch (e) {
+    res.status(500).json({ error: e.toString(), data: null });
+  }
+});
+
 // start the express server on port 5000
 app.listen(5000, () => {
   console.log("Server running on port 5000");
