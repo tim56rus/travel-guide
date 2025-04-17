@@ -36,7 +36,7 @@ function DoLogin() {
         };
         localStorage.setItem("user>data", JSON.stringify(user));
         setError("");
-        navigate("/account"); // change it to dashboard once its ready
+        navigate("/MyTrips");
       }
     } catch (err: any) {
       setError("error logging in: " + err.toString());

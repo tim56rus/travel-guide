@@ -44,7 +44,7 @@ function Header() {
           />
         </button>
         <ul className="dropdown-menu dropdown-menu-end">
-          <li><a className="dropdown-item" href="#">User Settings</a></li>
+          <li><a className="dropdown-item" href="/account">User Settings</a></li>
           <li><hr className="dropdown-divider" /></li>
           <li><a className="dropdown-item" href="#" style={{fontWeight:'bold'}}>Log Out</a></li>
         </ul>

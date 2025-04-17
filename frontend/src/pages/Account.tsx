@@ -250,7 +250,7 @@ function Account() {
         </form>
 
         <p className="text-center mt-3">
-          Back to <Link to="/MyTripsPage">Main Page</Link>
+          Back to <Link to="/MyTrips">Main Page</Link>
         </p>
       </div>
     </div>
