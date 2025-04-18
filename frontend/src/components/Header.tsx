@@ -9,7 +9,8 @@ function Header() {
         position: 'sticky', top: '0', zIndex: '1000',
         backgroundImage: 'linear-gradient(to right, #ACD3A8, #8AB2A6)',
         display: 'flex',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        boxShadow: '0 0 4px 0 rgba(0, 0, 0, 0.08), 0 2px 4px 0 rgba(0, 0, 0, 0.12)'
       }} 
     > 
       {/* logo */}
@@ -22,7 +23,7 @@ function Header() {
       {/* user icon + dropdown for logout and user management */}
       <div
         className="dropdown"
-        style={{padding: '5px'}}
+        style={{padding: '5px', fontFamily: 'Montserrat'}}
       >
         <button
           className="btn p-0 border-0 bg-transparent"
@@ -32,7 +33,7 @@ function Header() {
         >
           <img
             src="/defaultIcon.png"
-            alt="User"
+            alt="User Mangement"
             style={{
               width: '40px',
               height: '40px',

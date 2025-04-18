@@ -3,6 +3,7 @@ import Header from '../components/Header';
 import SearchTrips from '../components/SearchTrips';
 import TripsGrid from '../components/TripsGrid';
 import PlanTrip from '../components/PlanTrip';
+import FilterTrips from '../components/FilterTrips';
 
 const MyTripsPage = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -25,6 +26,7 @@ const MyTripsPage = () => {
       </h1>
         
       <SearchTrips />
+      <FilterTrips />
       <TripsGrid onAddTrip={() => setShowPopup(true)} />
 
       {showPopup && <PlanTrip onClose={() => setShowPopup(false)} />}

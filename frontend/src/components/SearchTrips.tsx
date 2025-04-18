@@ -2,7 +2,7 @@ function SearchTrips () {
   return(
     <div className="input-group rounded"
       style={{
-        display: 'flex', justifyContent: 'center', 
+        display: 'flex', justifyContent: 'center', fontFamily: 'Montserrat'
       }}
     >
       <input type="search" className="form-control rounded" placeholder="Search Trips..." aria-label="Search" aria-describedby="search-addon" 

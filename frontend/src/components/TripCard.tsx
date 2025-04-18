@@ -13,7 +13,8 @@ function TripCard() {
     display: 'flex',
     flexDirection: 'column',
     borderRadius: '5px',
-    width: '200px', height: '250px', aspectRatio: '4 / 3'
+    width: '200px', height: '250px', aspectRatio: '4 / 3',
+    fontFamily: 'Montserrat', fontSize: 'small'
     }}
     onClick={() => !showConfirm && navigate(`/TripDetails/`)}
     >

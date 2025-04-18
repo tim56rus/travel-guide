@@ -7,9 +7,8 @@ interface TripsGridProps {
 
 function TripsGrid({ onAddTrip }: TripsGridProps) {
   return (
-    <div className="container mt-4"
+    <div className="container mt-0"
       style={{
-        paddingTop: '15px',
         display: 'grid',
         gridTemplateColumns: 'repeat(5, 1fr)',
         gap: '1rem'
@@ -22,6 +21,7 @@ function TripsGrid({ onAddTrip }: TripsGridProps) {
             borderRadius: '5px',
             width: '200px',
             height: '250px',
+            fontFamily: 'Montserrat', fontWeight: '400'
           }}
         >
         <i className="fa-solid fa-plus" style={{ fontSize: '30px', fontWeight: '1' }}></i>
