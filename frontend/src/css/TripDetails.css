@@ -89,3 +89,20 @@
     text-decoration: underline;
   }
   
+  .trip-section img {
+    max-width: 100%;
+    max-height: 16rem;
+    object-fit: cover;
+    border-radius: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+
+  .trip-section textarea {
+    min-height: 3rem;
+  }
+  
+  .trip-section input[type="text"] {
+    font-weight: 500;
+  }
+  
