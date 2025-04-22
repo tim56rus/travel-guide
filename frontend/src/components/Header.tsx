@@ -1,6 +1,20 @@
 import '../css/Header.css';
+import { useNavigate } from 'react-router-dom';
 
 function Header() {
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/logout", {
+        method: "POST",
+        credentials: "include"
+      });
+      localStorage.removeItem("user>data"); 
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   return (
     // header background
@@ -22,9 +36,14 @@ function Header() {
 
       {/* user icon + dropdown for logout and user management */}
       <div
-        className="dropdown"
+        className=""d-flex align-items-center gap-2"
         style={{padding: '5px', fontFamily: 'Montserrat'}}
       >
+        <span id="userName" style={{
+          fontSize: '20px', paddingRight: '5px', fontWeight: '500', position: 'relative', top: '2px'
+          }}>
+            User</span>
+
         <button
           className="btn p-0 border-0 bg-transparent"
           type="button"
@@ -47,7 +66,7 @@ function Header() {
         <ul className="dropdown-menu dropdown-menu-end">
           <li><a className="dropdown-item" href="/account">User Settings</a></li>
           <li><hr className="dropdown-divider" /></li>
-          <li><a className="dropdown-item" href="#" style={{fontWeight:'bold'}}>Log Out</a></li>
+          <li><button className="dropdown-item" onClick={handleLogout} style={{fontWeight:'bold'}}>Log Out</button></li>
         </ul>
       </div>
     </div>
