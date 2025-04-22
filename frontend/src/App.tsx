@@ -8,7 +8,6 @@ import Signup from './pages/Signup'
 import Account from './pages/Account'
 import MyTripsPage from './pages/MyTripsPage'
 import TripDetails from './pages/TripDetails'
-import Map from './pages/Map'
 
 function App(){
   const [count, setCount] = useState<number>(0)
