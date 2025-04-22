@@ -36,7 +36,7 @@ function Header() {
 
       {/* user icon + dropdown for logout and user management */}
       <div
-        className=""d-flex align-items-center gap-2"
+        className="d-flex align-items-center gap-2"
         style={{padding: '5px', fontFamily: 'Montserrat'}}
       >
         <span id="userName" style={{
