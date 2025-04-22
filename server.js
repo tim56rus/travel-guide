@@ -14,8 +14,8 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      maxAge: 1000 * 60 * 60 * 1
-    }
+      maxAge: 1000 * 60 * 60 * 1,
+    },
   })
 );
 app.use(bodyParser.json());
@@ -51,6 +51,9 @@ app.get("/api/account/:userId", accountPopulateAPI);
 
 const checkSessionAPI = require("./backend/checkSession");
 app.get("/api/checkSession", checkSessionAPI);
+
+const searchTripsAPI = require("./backend/searchTrips");
+app.get("/api/searchTrips", searchTripsAPI);
 
 // start the express server on port 5000
 app.listen(5000, () => {
