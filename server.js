@@ -1,13 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-
-
-// Connect to db, use client for all db things
-const db = require("./backend/connectdb");
-
-
-
 const app = express();
 
 app.use(
@@ -34,24 +27,17 @@ app.use((req, res, next) => {
 
 // ======= API Endpoints ======= //
 
-// Import Login Handler
+// Each first line is the handler and second line is the actual api endpoint
 const loginAPI = require("./backend/login");
-// Add Login API to site
 app.post("/api/login", loginAPI);
 
-// Import Signup Handler
 const signupAPI = require("./backend/signup");
-// Add Signup API to site
 app.post("/api/signup", signupAPI);
 
-// Import Account Update Handler
 const accountUpdateAPI = require("./backend/accountUpdate");
-// Add Account Update API to site
 app.put("/api/account/update", accountUpdateAPI);
 
-// Import Account Populate Handler
 const accountPopulateAPI = require("./backend/accountPopulate");
-// Add Account Populate API to site
 app.get("/api/account/:userId", accountPopulateAPI);
 
 // start the express server on port 5000
