@@ -11,4 +11,5 @@ update:
 pull:
 	git pull
 
-
+verify:
+	npm run verify
