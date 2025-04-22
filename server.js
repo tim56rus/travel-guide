@@ -49,6 +49,9 @@ app.put("/api/account/update", accountUpdateAPI);
 const accountPopulateAPI = require("./backend/accountPopulate");
 app.get("/api/account/:userId", accountPopulateAPI);
 
+const checkSessionAPI = require("./backend/checkSession");
+app.get("/api/checkSession", checkSessionAPI);
+
 // start the express server on port 5000
 app.listen(5000, () => {
   console.log("Server running on port 5000");

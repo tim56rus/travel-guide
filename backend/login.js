@@ -30,6 +30,9 @@ module.exports = async function loginAPI(req, res) {
       fn = results[0].FirstName;
       ln = results[0].LastName;
       userName = results[0].Username;
+
+      // Save session
+      req.session.userId = results[0]._id;
     } else {
       error = "Invalid username/email or password";
     }

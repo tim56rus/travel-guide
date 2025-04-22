@@ -12,7 +12,7 @@ mkdir -p RUNNING
 # ----------------------------------------
 # Start "npm run dev" in the ./frontend folder.
 pushd frontend > /dev/null
-npm run dev > ../frontend_dev.log 2>&1 &
+npm run dev > ../frontend.log 2>&1 &
 pid_frontend=$!
 popd > /dev/null
 # Save the PID in the RUNNING folder.
@@ -20,7 +20,7 @@ echo "$pid_frontend" > RUNNING/frontend_dev.pid
 
 # ----------------------------------------
 # Start "npm start" in the current directory.
-npm start > start.log 2>&1 &
+npm start > npm.log 2>&1 &
 pid_start=$!
 # Save the PID in the RUNNING folder.
 echo "$pid_start" > RUNNING/start.pid

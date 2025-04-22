@@ -1,4 +1,4 @@
-import { useState, FormEvent, ChangeEvent } from "react";
+import { useState, useEffect, FormEvent, ChangeEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from '../assets/WanderLogo.png'
 
@@ -7,6 +7,24 @@ function DoLogin() {
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
+
+  // Check if session exists
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch("https://lp.poosdisfun.xyz/api/checkSession", {
+          method: "GET",
+          credentials: "include"
+        });
+        const data = await res.json();
+        if (data.userId) {
+          navigate("/MyTrips");
+        }
+      } catch (e) {
+        console.error("session check failed", e);
+      }
+    })();
+  }, [navigate]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
