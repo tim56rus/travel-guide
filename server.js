@@ -1,4 +1,5 @@
 const express = require("express");
+const session = require("express-session");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const app = express();
@@ -7,6 +8,14 @@ app.use(
   cors({
     origin: "https://lp.poosdisfun.xyz",
     credentials: true,
+  }),
+  session({
+    secret: "SECRETKEY",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 1
+    }
   })
 );
 app.use(bodyParser.json());
