@@ -3,6 +3,7 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const app = express();
+const path = require('path');
 
 app.use(
   cors({
@@ -19,7 +20,7 @@ app.use(
   })
 );
 app.use(bodyParser.json());
-
+app.use(bodyParser.urlencoded({ extended: true }));
 // set up CORS headers
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -54,6 +55,15 @@ app.get("/api/checkSession", checkSessionAPI);
 
 const searchTripsAPI = require("./backend/searchTrips");
 app.get("/api/searchTrips", searchTripsAPI);
+
+
+app.use('/uploads', express.static(path.join(__dirname,'backend', 'uploads')));
+
+const { fileManagementRoutes } = require("./backend/fileManagement");
+app.use("/api", fileManagementRoutes);
+
+const tripDetailsRoutes = require("./backend/tripDetails");
+app.use("/api", tripDetailsRoutes);
 
 // start the express server on port 5000
 app.listen(5000, () => {
