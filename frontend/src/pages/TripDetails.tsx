@@ -127,7 +127,7 @@ const TripDetails = () => {
   if (!trip) return <p className="text-center mt-10">Trip not found</p>;
 
   return (
-    <div className="trip-container max-w-5xl mx-auto p-6 bg-white rounded-xl shadow space-y-8">
+    <div className="trip-container max-w-5xl mx-auto p-6 rounded-xl shadow space-y-8" style = {{backgroundColor: '#F6F1DE'}}>
       <button onClick={() => navigate(-1)} className="back-button">
         ← Back
       </button>
