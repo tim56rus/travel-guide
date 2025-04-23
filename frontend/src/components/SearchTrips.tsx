@@ -53,17 +53,20 @@ function SearchTrips() {
           }}
         />
         {/* Search Icon */}
-        <i
-          className="fas fa-search"
+        <button
+          type="button"
           style={{
+            all: 'unset', 
             position: 'absolute',
             right: '10px',
             top: '50%',
             transform: 'translateY(-50%)',
-            color: 'gray',
             zIndex: 3,
+            cursor: 'pointer',
           }}
-        />
+        >
+          <i className="fas fa-search" style={{ color: 'gray' }} />
+        </button>
 
         {/* Suggestions Dropdown */}
         {showSuggestions && (
