@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 function Header() {
   const navigate = useNavigate();
+
   const handleLogout = async () => {
     try {
       await fetch("/api/logout", {

@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import logo from "../assets/WanderImg.png";
 import '../css/TripDetails.css';
 
 function Account() {
+  const navigate = useNavigate();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
@@ -16,6 +17,33 @@ function Account() {
   const [profilePicture, setProfilePicture] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleted, setDeleted] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Session check on mount
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch("/api/checkSession", {
+          method: "GET",
+          credentials: "include",
+        });
+        const data = await res.json();
+        if (!data.userId) {
+          navigate("/login", { replace: true });
+        }
+      } catch (e) {
+        console.error("Session check failed", e);
+        navigate("/login", { replace: true });
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [navigate]);
+
+  // Render loading state
+  if (loading) {
+    return <div style={{ textAlign: 'center', marginTop: '2rem' }}>Loading…</div>;
+  }
 
   const handleUpdate = (e) => {
     e.preventDefault();

@@ -101,4 +101,7 @@ function SearchTrips() {
   );
 }
 
+
+
 export default SearchTrips;
+

@@ -1,14 +1,13 @@
+// backend/logout.js
 module.exports = function logoutAPI(req, res) {
-  // destroy server‑side session
   req.session.destroy(err => {
     if (err) {
       console.error("Session destroy error:", err);
-      // even if destroy fails, clear the cookie on the client
-      res.clearCookie("connect.sid");
-      return res.status(500).json({ error: "Could not log out." });
+      // even if destroy fails, we still clear the cookie
     }
-    // clear the cookie in the browser
-    res.clearCookie("connect.sid");
-    res.status(200).json({ success: "Logged out successfully." });
+    // clear the cookie on the client — path must match your session cookie’s path
+    res.clearCookie("connect.sid", { path: "/" });
+    // 200 is fine here
+    return res.status(200).json({ success: "Logged out successfully." });
   });
-});
+};

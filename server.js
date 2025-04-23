@@ -15,7 +15,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      maxAge: 1000 * 60 * 60 * 1,
+      maxAge: 1000 * 60 * 30,
     },
   })
 );
@@ -55,6 +55,9 @@ app.get("/api/checkSession", checkSessionAPI);
 
 const searchTripsAPI = require("./backend/searchTrips");
 app.get("/api/searchTrips", searchTripsAPI);
+
+const logoutAPI = require("./backend/logout");
+app.post("/api/logout", logoutAPI);
 
 //Need for accessing the uploads for display
 app.use('/uploads', express.static(path.join(__dirname,'backend', 'uploads')));
