@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/WanderImg.png";
+import '../css/TripDetails.css';
 
 function Account() {
   const [firstName, setFirstName] = useState("");
@@ -62,7 +63,7 @@ function Account() {
   return (
     <div className="d-flex justify-content-center align-items-center vh-100">
       <div
-        className="card shadow p-4"
+        className="trip-container max-w-5xl mx-auto p-6 rounded-xl shadow space-y-8"
         style={{ width: "100%", maxWidth: "600px", backgroundColor: "#F6F1DE" }}
       >
         <div className="d-flex justify-content-between align-items-center mb-4">

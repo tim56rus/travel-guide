@@ -1,6 +1,7 @@
 import { useState, FormEvent, ChangeEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from '../assets/WanderLogo.png'
+import '../css/TripDetails.css';
 
 function DoSignup() {
   const [firstName, setFirstName] = useState<string>("");
@@ -65,7 +66,7 @@ function DoSignup() {
         />
       </div>
       <div
-        className="card shadow p-4"
+        className="trip-container max-w-5xl mx-auto p-6 rounded-xl shadow space-y-8"
         style={{ width: "100%", maxWidth: "500px", backgroundColor: "#F6F1DE" }}
       >
         <h2 className="text-center mb-4">Sign Up</h2>
