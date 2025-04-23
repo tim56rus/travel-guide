@@ -10,10 +10,9 @@ type ItineraryItem = {
 
 type PlanPopupProps = {
   onClose: () => void;
-  onSubmit: (tripData: any) => void; // SUBMIT
 };
 
-const PlanPopup: React.FC<PlanPopupProps> = ({ onClose, onSubmit }) => {
+const PlanPopup: React.FC<PlanPopupProps> = ({ onClose }) => {
   const [tripName, setTripName] = useState("");
   const [location, setLocation] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -109,7 +108,7 @@ const PlanPopup: React.FC<PlanPopupProps> = ({ onClose, onSubmit }) => {
       if (!res.ok) {
         setError(result.error || 'Failed to create trip');
       } else {
-        onSubmit(result);
+        //onSubmit(result);
         onClose();
       }
     } catch (err: any) {

@@ -1,4 +1,5 @@
 const db = require("./connectdb");
+const { ObjectId } = require("mongodb");
 
 module.exports = async function searchTripsAPI(req, res) {
   // require authentication
@@ -7,16 +8,16 @@ module.exports = async function searchTripsAPI(req, res) {
     return res.status(401).json({ error: "Not authenticated", data: null });
   }
 
-  // read params, defaulting `by` to "title"
-  const byRaw = String(req.query.by || "title").toLowerCase();
+  // read params, defaulting `by` to "name"
+  const byRaw = String(req.query.by || "name").toLowerCase();
   const q     = req.query.q;
   if (!q) {
     return res.status(400).json({ error: "Missing ‘q’ parameter", data: null });
   }
 
-  // handle date-range search specially
+  // handle date‐range search
   if (byRaw === "dates") {
-    // normalize query-date (accept any non-digit separator)
+    // accept human‐friendly separators
     const norm = String(q).replace(/\D+/g, "/");
     const queryDate = new Date(norm);
     if (isNaN(queryDate)) {
@@ -26,14 +27,13 @@ module.exports = async function searchTripsAPI(req, res) {
     try {
       const trips = await db
         .collection("Trips")
-        .find({ Owner: userId })
+        .find({ owner: new ObjectId(userId) })
         .toArray();
 
       const inRange = trips.filter(trip => {
-        if (!trip.Dates) return false;
-        const [startRaw, endRaw] = String(trip.Dates).split(/\s*-\s*/);
-        const start = new Date(startRaw.replace(/\D+/g, "/"));
-        const end   = new Date(endRaw  .replace(/\D+/g, "/"));
+        if (!trip.startDate || !trip.endDate) return false;
+        const start = new Date(trip.startDate);
+        const end   = new Date(trip.endDate);
         if (isNaN(start) || isNaN(end)) return false;
         return queryDate >= start && queryDate <= end;
       });
@@ -44,25 +44,35 @@ module.exports = async function searchTripsAPI(req, res) {
     }
   }
 
-  // map other modes to fields
-  let field;
-  switch (byRaw) {
-    case "place": field = "Location"; break;
-    case "notes": field = "Notes";    break;
-    case "title": field = "Trip";     break;
-    default:
-      return res.status(400).json({ error: "Invalid search field", data: null });
-  }
-
-  // build case‑insensitive regex
-  const esc = String(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  // build case‐insensitive regex
+  const esc   = String(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const regex = new RegExp(esc, "i");
+
+  // build filter for name, location, or combined journal+itinerary
+  let filter;
+  if (byRaw === "name" || byRaw === "location") {
+    filter = { [byRaw]: regex };
+  } else if (byRaw === "journal") {
+    filter = {
+      $or: [
+        { journal: regex },
+        { "itinerary.day": regex },
+        { "itinerary.morning": regex },
+        { "itinerary.afternoon": regex },
+        { "itinerary.evening": regex },
+      ],
+    };
+  } else {
+    return res
+      .status(400)
+      .json({ error: "Invalid search field", data: null });
+  }
 
   // run the query
   try {
     const data = await db
       .collection("Trips")
-      .find({ Owner: userId, [field]: regex })
+      .find({ owner: new ObjectId(userId), ...filter })
       .toArray();
     return res.status(200).json({ error: "", data });
   } catch (e) {
