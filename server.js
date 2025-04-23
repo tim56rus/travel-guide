@@ -56,15 +56,26 @@ app.get("/api/checkSession", checkSessionAPI);
 const searchTripsAPI = require("./backend/searchTrips");
 app.get("/api/searchTrips", searchTripsAPI);
 
-
+//Need for accessing the uploads for display
 app.use('/uploads', express.static(path.join(__dirname,'backend', 'uploads')));
 
-const { fileManagementRoutes } = require("./backend/fileManagement");
-app.use("/api", fileManagementRoutes);
+const {
+  listFiles,
+  uploadFile,
+  getFile,
+  deleteFile
+} = require('./backend/fileManagement');
+app.get('/api/files', listFiles);
+app.post('/api/upload', uploadFile);
+app.get('/api/files/:filename', getFile);
+app.delete('/api/files/:filename', deleteFile);
 
-const tripDetailsRoutes = require("./backend/tripDetails");
-app.use("/api", tripDetailsRoutes);
-
+const { createTrip, getTrips, deleteTrip, updateTrip, deleteTripPhoto} = require("./backend/tripDetails");
+app.post("/api/trips", createTrip);
+app.get("/api/trips", getTrips);
+app.delete("/api/trips/:id", deleteTrip);
+app.put("/api/trips/:id", updateTrip);
+app.delete("/api/photo/:tripId/:filename", deleteTripPhoto);
 // start the express server on port 5000
 app.listen(5000, () => {
   console.log("Server running on port 5000");
