@@ -13,7 +13,7 @@ function Header() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch("/api/accountPopulate", {
+        const res = await fetch("/api/account/populate", {
           credentials: "include"
         });
         const json = await res.json();
