@@ -6,4 +6,5 @@
 
 body{
   background: linear-gradient(to right, #8AB2A6, #ACD3A8);
+  overflow: hidden;
 }
