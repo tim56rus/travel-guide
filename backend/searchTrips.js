@@ -23,6 +23,26 @@ module.exports = async function searchTripsAPI(req, res) {
       return res.status(500).json({ error: e.toString(), data: null });
     }
   }
+  
+   if (byRaw === "id" || byRaw === "_id") {
+    let oid;
+    try {
+      oid = new ObjectId(q);
+    } catch {
+      return res
+        .status(400)
+        .json({ error: "Invalid ID format", data: null });
+    }
+    try {
+      const data = await db
+        .collection("Trips")
+        .find({ owner: userId, _id: oid })
+        .toArray();
+      return res.status(200).json({ error: "", data });
+    } catch (e) {
+      return res.status(500).json({ error: e.toString(), data: null });
+    }
+  }
 
 
   // handle date‐range search
