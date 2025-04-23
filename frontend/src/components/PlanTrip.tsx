@@ -79,21 +79,39 @@ const PlanPopup: React.FC<PlanPopupProps> = ({ onClose, onSubmit }) => {
     setItinerary(updated);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const tripData = {
-      name: tripName,
-      startDate,
-      endDate,
-      flightInfo,
-      journal,
-      image: coverPhoto,
-      tripPhotos,
-      itinerary,
-    };
-    onSubmit(tripData);
-    onClose();
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  const tripData = {
+    name: tripName,
+    startDate,
+    endDate,
+    flightInfo,
+    journal,
+    image: coverPhoto,
+    tripPhotos,
+    itinerary,
   };
+
+  // send to the new API
+  await fetch("/api/createTrip", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  credentials: "include",
+  body: JSON.stringify(tripData),
+});
+
+  const result = await res.json();
+  if (result.error) {
+    // handle error…
+    console.error(result.error);
+  } else {
+    // success!
+    console.log("New trip ID:", result.tripId);
+    onClose();
+  }
+};
+
 
   return (
     <div className="popup-backdrop">

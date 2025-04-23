@@ -59,6 +59,10 @@ app.get("/api/searchTrips", searchTripsAPI);
 const logoutAPI = require("./backend/logout");
 app.post("/api/logout", logoutAPI);
 
+const createTripAPI = require("./backend/createTrip");
+app.post("/api/createTrip", createTripAPI);
+
+
 //Need for accessing the uploads for display
 app.use('/uploads', express.static(path.join(__dirname,'backend', 'uploads')));
 
