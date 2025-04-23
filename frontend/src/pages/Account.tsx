@@ -18,7 +18,8 @@ function Account() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleted, setDeleted] = useState(false);
   const [loading, setLoading] = useState(true);
-  
+  const [userId, setUserId] = useState<string>("");
+
 
   // Session check on mount
   useEffect(() => {
@@ -33,6 +34,7 @@ function Account() {
       if (!userId) {
         return navigate("/login", { replace: true });
       }
+	  setUserId(userId);
 
       // 2) load account data
       const acctRes = await fetch("/api/account/populate", {
@@ -61,26 +63,51 @@ function Account() {
     return <div style={{ textAlign: 'center', marginTop: '2rem' }}>Loading…</div>;
   }
 
-  const handleUpdate = (e) => {
-    e.preventDefault();
+  const handleUpdate = async (e) => {
+  e.preventDefault();
+  setError("");
+  setSuccess("");
 
-    if (newPassword !== confirmNewPassword) {
-      setError("New passwords do not match");
-      setSuccess("");
-      return;
-    }
+  // Password-match check
+  if (newPassword && newPassword !== confirmNewPassword) {
+    setError("New passwords do not match");
+    return;
+  }
 
-    setError("");
-    setSuccess("User details updated successfully!");
-
-    setFirstName("");
-    setLastName("");
-    setUsername("");
-    setEmail("");
-    setPassword("");
-    setNewPassword("");
-    setConfirmNewPassword("");
+  // Build payload
+  const payload = {
+    userId,
+    username,
+    email,
+    firstName,
+    lastName,
+    password: password || "",
+    newPassword: newPassword || "",
+    confirmNewPassword: confirmNewPassword || ""
   };
+
+  try {
+    const res = await fetch("/api/account/update", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(payload)
+    });
+    const { error: errMsg, success: successMsg } = await res.json();
+    if (errMsg) {
+      setError(errMsg);
+    } else {
+      setSuccess(successMsg);
+      // optionally clear only password fields
+      setPassword("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+    }
+  } catch (e) {
+    setError("Unable to update account. Please try again.");
+    console.error(e);
+  }
+};
 
   const handleProfilePictureChange = (e) => {
     const file = e.target.files[0];
