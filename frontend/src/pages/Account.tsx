@@ -174,16 +174,16 @@ function Account() {
             </div>
 
             <div className="mb-3 col-md-6">
-              <label className="form-label text-start w-100">Username:</label>
-              <input
-                type="text"
-                className="form-control custom-input"
-                value={firstName}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-            </div>
-          </div>
+    <label className="form-label text-start w-100">Username:</label>
+    <input
+      type="text"
+      className="form-control custom-input"
+      value={username} 
+      onChange={(e) => setUsername(e.target.value)}
+      required
+    />
+  </div>
+</div>
 
           <div className="row">
             <div className="mb-3 col-md-6">
@@ -191,7 +191,7 @@ function Account() {
               <input
                 type="text"
                 className="form-control custom-input"
-                value={lastName}
+                value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 required
               />
@@ -202,7 +202,7 @@ function Account() {
               <input
                 type="text"
                 className="form-control custom-input"
-                value={username}
+                value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 required
               />
