@@ -12,24 +12,29 @@ const MyTripsPage = () => {
     <div style={{
       backgroundColor: '#F6F1DE',
       minHeight: '100vh',
-      width: '100%',
-      position: 'relative'
+      display: 'flex', 
+      flexDirection: 'column', 
+      overflow: 'hidden',
     }}>
       <Header />
-      <h1 style={{
-        fontFamily: 'Montserrat', fontWeight: '300',
-        textAlign: 'center',
-        fontSize: '60px',
-        padding: '10px'
-      }}>
-        My Trips
-      </h1>
-        
-      <SearchTrips />
-      <FilterTrips />
-      <TripsGrid onAddTrip={() => setShowPopup(true)} />
 
-      {showPopup && <PlanTrip onClose={() => setShowPopup(false)} />}
+      <div style={{ flex: 1, overflowY: 'auto' }}>
+        <h1 style={{
+          fontFamily: 'Montserrat', fontWeight: '300',
+          textAlign: 'center',
+          fontSize: '60px',
+          padding: '10px'
+        }}>
+          My Trips
+        </h1>
+          
+        <SearchTrips />
+        <FilterTrips />
+        
+        <TripsGrid onAddTrip={() => setShowPopup(true)} />
+
+        {showPopup && <PlanTrip onClose={() => setShowPopup(false)} />}
+      </div>
     </div>
   );
 };

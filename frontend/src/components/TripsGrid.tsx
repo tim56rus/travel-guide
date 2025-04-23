@@ -7,11 +7,12 @@ interface TripsGridProps {
 
 function TripsGrid({ onAddTrip }: TripsGridProps) {
   return (
-    <div className="container mt-0"
+    <div 
       style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(5, 1fr)',
-        gap: '1rem'
+        gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+        gap: '2.5rem', padding: '0 2rem 2rem 2rem',
+        justifyContent: 'start', justifyItems: 'center'
       }}>
         {/* add new trip btn */} 
         <button id='addCardBtn' onClick={onAddTrip}

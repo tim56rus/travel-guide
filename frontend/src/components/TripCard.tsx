@@ -8,13 +8,13 @@ function TripCard() {
 
   return(
     // individual trip card 
-    <div className="card h-100 overflow-hidden position-relative"
+    <div className="card overflow-hidden position-relative"
     style={{
-    display: 'flex',
-    flexDirection: 'column',
-    borderRadius: '5px',
-    width: '200px', height: '250px', aspectRatio: '4 / 3',
-    fontFamily: 'Montserrat', fontSize: 'small'
+      display: 'flex',
+      flexDirection: 'column',
+      borderRadius: '5px',
+      width: '200px', height: '250px',
+      fontFamily: 'Montserrat', fontSize: 'small'
     }}
     onClick={() => !showConfirm && navigate(`/TripDetails/`)}
     >
@@ -64,7 +64,7 @@ function TripCard() {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          padding: '0', 
+          padding: '5px', 
           borderTop: '1px solid #D3D3D3' 
         }}>
           <h1 className="card-title" style={{fontSize: '20px', paddingLeft: '5px', margin: '0px'}}>Destination</h1>
