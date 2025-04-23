@@ -25,12 +25,12 @@ type TripDetails = {
 
 const dummyTrip: TripDetails = {
   _id: 'dummy123',
-  name: 'Tokyo Dream Trip',
+  name: 'Dream Trip',
   startDate: '2025-07-15',
   endDate: '2025-07-22',
   flightInfo: 'Flight JL062 - LAX to HND at 2:45 PM',
   journal: `Can't wait to explore Tokyo. Planning to see temples, enjoy ramen, and stroll through Shibuya.`,
-  image: 'https://images.unsplash.com/photo-1587019154294-9c3b6dd4df4b',
+  image: '',
   itinerary: [],
   tripPhotos: [],
 };
@@ -194,30 +194,39 @@ const TripDetails = () => {
           </button>
         </div>
         {editState.image ? (
-          <>
-            {trip.image && (
-              <img
-                src={trip.image}
-                alt="Cover"
-                className="w-full h-64 object-cover rounded-xl shadow mb-2"
-              />
-            )}
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleCoverUpload}
-              className="p-2 w-full border rounded"
-            />
-          </>
-        ) : (
-          trip.image && (
-            <img
-              src={trip.image}
-              alt={trip.name}
-              className="w-full h-64 object-cover rounded-xl shadow"
-            />
-          )
-        )}
+  <>
+    {trip.image && (
+      <img
+        src={trip.image}
+        alt="Cover"
+        className="w-full h-64 object-cover rounded-xl shadow mb-2"
+      />
+    )}
+    <input
+      type="file"
+      accept="image/*"
+      onChange={handleCoverUpload}
+      className="p-2 w-full border rounded"
+    />
+    {trip.image && (
+      <button
+        onClick={() => handleInputChange('image', '')}
+        className="edit-button mt-2"
+      >
+        Remove Cover Photo
+      </button>
+    )}
+  </>
+) : (
+  trip.image && (
+    <img
+      src={trip.image}
+      alt={trip.name}
+      className="w-full h-64 object-cover rounded-xl shadow"
+    />
+  )
+)}
+
       </section>
 
       {/* Flight Info */}
@@ -259,85 +268,89 @@ const TripDetails = () => {
         </div>
 
         {editState.itinerary ? (
-          <>
-            {trip.itinerary.map((item, idx) => (
-              <div
-                key={idx}
-                className="mb-4 border rounded p-4 bg-white shadow-sm"
-              >
-                <div className="flex justify-between items-center mb-2">
-                  <input
-                    type="text"
-                    value={item.day}
-                    onChange={(e) =>
-                      handleItineraryChange(idx, "day", e.target.value)
-                    }
-                    className="font-semibold text-lg w-full p-2 border rounded mb-2"
-                    placeholder="Day Title"
-                  />
-                  <button
-                    onClick={() => removeItineraryDay(idx)}
-                    className="edit-button text-red-500"
-                  >
-                    Remove
-                  </button>
-                </div>
-                <textarea
-                  placeholder="Morning Plans..."
-                  value={item.morning || ""}
-                  onChange={(e) =>
-                    handleItineraryChange(idx, "morning", e.target.value)
-                  }
-                  className="p-2 w-full border rounded mb-2"
-                />
-                <textarea
-                  placeholder="Afternoon Plans..."
-                  value={item.afternoon || ""}
-                  onChange={(e) =>
-                    handleItineraryChange(idx, "afternoon", e.target.value)
-                  }
-                  className="p-2 w-full border rounded mb-2"
-                />
-                <textarea
-                  placeholder="Evening Plans..."
-                  value={item.evening || ""}
-                  onChange={(e) =>
-                    handleItineraryChange(idx, "evening", e.target.value)
-                  }
-                  className="p-2 w-full border rounded"
-                />
-              </div>
-            ))}
-            <button
-              onClick={addItineraryDay}
-              className="edit-button mt-2 text-green-500"
-            >
-              + Add Day
-            </button>
-          </>
-        ) : (
-          trip.itinerary.map((item, idx) => (
-            <div key={idx} className="mb-4">
-              <h3 className="font-semibold text-lg">{item.day}</h3>
-              {item.morning && (
-                <p className="italic mt-1">
-                  <span className="font-medium">Morning:</span> {item.morning}
-                </p>
-              )}
-              {item.afternoon && (
-                <p className="italic mt-1">
-                  <span className="font-medium">Afternoon:</span>{" "}
-                  {item.afternoon}
-                </p>
-              )}
-              {item.evening && (
-                <p className="italic mt-1">
-                  <span className="font-medium">Evening:</span> {item.evening}
-                </p>
-              )}
-            </div>
-          ))
-        )}
+  <>
+    {trip.itinerary.map((item, idx) => (
+      <div
+        key={idx}
+        className="mb-4 border rounded p-4 bg-white shadow-sm"
+      >
+        <div className="flex justify-between items-center mb-2">
+          <input
+            type="text"
+            value={item.day}
+            onChange={(e) =>
+              handleItineraryChange(idx, "day", e.target.value)
+            }
+            className="font-semibold text-lg w-full p-2 border rounded mb-2"
+            placeholder="Day Title"
+          />
+          
+        </div>
+        <textarea
+          placeholder="Morning Plans..."
+          value={item.morning || ""}
+          onChange={(e) =>
+            handleItineraryChange(idx, "morning", e.target.value)
+          }
+          className="p-2 w-full border rounded mb-2"
+        />
+        <textarea
+          placeholder="Afternoon Plans..."
+          value={item.afternoon || ""}
+          onChange={(e) =>
+            handleItineraryChange(idx, "afternoon", e.target.value)
+          }
+          className="p-2 w-full border rounded mb-2"
+        />
+        <textarea
+          placeholder="Evening Plans..."
+          value={item.evening || ""}
+          onChange={(e) =>
+            handleItineraryChange(idx, "evening", e.target.value)
+          }
+          className="p-2 w-full border rounded"
+        />
+        <button
+            onClick={() => removeItineraryDay(idx)}
+            className="edit-button text-red-500"
+            style={{ marginLeft: '10px' }}
+          >
+            Remove Day
+          </button>
+      </div>
+    ))}
+    <button
+      onClick={addItineraryDay}
+      className="edit-button mt-2 text-green-500"
+    >
+      + Add Day
+    </button>
+
+    
+  </>
+) : (
+  trip.itinerary.map((item, idx) => (
+    <div key={idx} className="mb-4">
+      <h3 className="font-semibold text-lg">{item.day}</h3>
+      {item.morning && (
+        <p className="italic mt-1">
+          <span className="font-medium">Morning:</span> {item.morning}
+        </p>
+      )}
+      {item.afternoon && (
+        <p className="italic mt-1">
+          <span className="font-medium">Afternoon:</span> {item.afternoon}
+        </p>
+      )}
+      {item.evening && (
+        <p className="italic mt-1">
+          <span className="font-medium">Evening:</span> {item.evening}
+        </p>
+      )}
+    </div>
+  ))
+)}
+
       </section>
 
       {/* Journal */}
@@ -399,11 +412,13 @@ const TripDetails = () => {
                     className="p-2 border rounded"
                   />
                   <button
-                    onClick={() => removePhotoBox(index)}
-                    className="edit-button text-red-500"
-                  >
-                    -
-                  </button>
+  onClick={() => removePhotoBox(index)}
+  className="edit-button text-500"
+  style={{ backgroundColor: '#8aac86', padding: '4px 12px', border: '1px solid grey', borderRadius: '50px'}}
+>
+  -
+</button>
+
                 </div>
               ))}
             <button

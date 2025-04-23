@@ -106,3 +106,14 @@
     font-weight: 500;
   }
   
+
+  .edit-button {
+    font-size: 0.875rem;
+    color: #3b82f6;
+    cursor: pointer;
+    border: none;
+    background: none;
+    transition: color 0.2s ease;
+  }
+
+  
