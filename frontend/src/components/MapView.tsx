@@ -4,7 +4,11 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoibHVpc2FhaWtvIiwiYSI6ImNtOW9taGNmeDEzaXYyanE3NTE5Y2N2ZWoifQ.6y-DqLfpxyAK-IjditBnkQ';
 
-const MapView: React.FC = () => {
+type MapViewProps = {
+  location: string;
+};
+
+const MapView: React.FC<MapViewProps> = ({ location }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<mapboxgl.Map | null>(null);
   const [city, setCity] = useState('');
@@ -15,7 +19,7 @@ const MapView: React.FC = () => {
       const initializeMap = new mapboxgl.Map({
         container: mapContainerRef.current,
         style: 'mapbox://styles/mapbox/streets-v12',
-        center: [-81.19861, 28.59861], // Default: UCF
+        center: [-81.19861, 28.59861], // Default to UCF
         zoom: 10,
       });
 
@@ -27,8 +31,36 @@ const MapView: React.FC = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const fetchInitialLocation = async () => {
+      if (!location || !map) return;
+
+      const response = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+          location
+        )}.json?access_token=${mapboxgl.accessToken}`
+      );
+      const data = await response.json();
+
+      if (data.features && data.features.length > 0) {
+        const [lng, lat] = data.features[0].geometry.coordinates;
+        map.flyTo({ center: [lng, lat], zoom: 13 });
+
+        if (markerRef.current) {
+          markerRef.current.remove();
+        }
+
+        markerRef.current = new mapboxgl.Marker()
+          .setLngLat([lng, lat])
+          .addTo(map);
+      }
+    };
+
+    fetchInitialLocation();
+  }, [location, map]);
+
   const handleSearch = async () => {
-    if (!city) return;
+    if (!city || !map) return;
 
     const response = await fetch(
       `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
@@ -40,7 +72,7 @@ const MapView: React.FC = () => {
     if (data.features && data.features.length > 0) {
       const [lng, lat] = data.features[0].geometry.coordinates;
 
-      map?.flyTo({ center: [lng, lat], zoom: 13 });
+      map.flyTo({ center: [lng, lat], zoom: 13 });
 
       if (markerRef.current) {
         markerRef.current.remove();
@@ -48,7 +80,7 @@ const MapView: React.FC = () => {
 
       markerRef.current = new mapboxgl.Marker()
         .setLngLat([lng, lat])
-        .addTo(map!);
+        .addTo(map);
     } else {
       alert('City not found!');
     }

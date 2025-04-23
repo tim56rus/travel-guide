@@ -14,6 +14,7 @@ type ItineraryItem = {
 type TripDetails = {
   _id: string;
   name: string;
+  location: string;
   startDate: string;
   endDate: string;
   flightInfo: string;
@@ -26,6 +27,7 @@ type TripDetails = {
 const dummyTrip: TripDetails = {
   _id: 'dummy123',
   name: 'Dream Trip',
+  location: 'Tokyo, Japan',
   startDate: '2025-07-15',
   endDate: '2025-07-22',
   flightInfo: 'Flight JL062 - LAX to HND at 2:45 PM',
@@ -41,6 +43,7 @@ const TripDetails = () => {
   const [trip, setTrip] = useState<TripDetails | null>(null);
   const [editState, setEditState] = useState({
     name: false,
+    location: false,
     date: false,
     flight: false,
     journal: false,
@@ -179,6 +182,30 @@ const TripDetails = () => {
           </>
         )}
       </section>
+      {/* Location */}
+<section className="trip-section">
+  <div className="flex justify-between items-center">
+    <h2 className="text-2xl font-semibold text-slate-800">Location</h2>
+    <button
+      className="edit-button"
+      onClick={() =>
+        setEditState({ ...editState, location: !editState.location })
+      }
+    >
+      {editState.location ? "Save" : "Edit"}
+    </button>
+  </div>
+  {editState.location ? (
+    <input
+      value={trip.location}
+      onChange={(e) => handleInputChange("location", e.target.value)}
+      className="mt-2 p-2 w-full border rounded"
+    />
+  ) : (
+    <p className="mt-2 text-slate-700">{trip.location}</p>
+  )}
+</section>
+
 
       {/* Cover Photo */}
       <section className="trip-section border p-4 rounded-xl bg-slate-50 shadow">
@@ -452,7 +479,7 @@ const TripDetails = () => {
       {/* Map */}
       <section className="trip-section">
         <h2 className="text-2xl font-semibold text-slate-800 mb-2">Map View</h2>
-        <MapView />
+        <MapView location={trip.location} />
       </section>
     </div>
   );
