@@ -202,16 +202,18 @@ const TripDetails = () => {
         className="w-full h-64 object-cover rounded-xl shadow mb-2"
       />
     )}
-    <input
-      type="file"
-      accept="image/*"
-      onChange={handleCoverUpload}
-      className="p-2 w-full border rounded"
-    />
+    <label className="file-upload-label">
+      Choose Cover Photo
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleCoverUpload}
+      />
+    </label>
     {trip.image && (
       <button
         onClick={() => handleInputChange('image', '')}
-        className="edit-button mt-2"
+        className="remove-day-btn mt-2"
       >
         Remove Cover Photo
       </button>
@@ -226,6 +228,7 @@ const TripDetails = () => {
     />
   )
 )}
+
 
       </section>
 
@@ -394,41 +397,42 @@ const TripDetails = () => {
         </div>
 
         {editState.tripPhotos && (
-          <>
-            {trip.tripPhotos &&
-              trip.tripPhotos.map((photo, index) => (
-                <div key={index} className="flex items-center gap-4 mt-2">
-                  {photo && (
-                    <img
-                      src={photo}
-                      alt={`Trip ${index}`}
-                      className="w-32 h-24 object-cover rounded shadow"
-                    />
-                  )}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleTripPhotoUpload(e, index)}
-                    className="p-2 border rounded"
-                  />
-                  <button
-  onClick={() => removePhotoBox(index)}
-  className="edit-button text-500"
-  style={{ backgroundColor: '#8aac86', padding: '4px 12px', border: '1px solid grey', borderRadius: '50px'}}
->
-  -
-</button>
+  <>
+    {trip.tripPhotos &&
+      trip.tripPhotos.map((photo, index) => (
+        <div key={index} className="photo-container flex items-center gap-4 mt-2">
+          {photo && (
+            <img
+              src={photo}
+              alt={`Trip ${index}`}
+              className="w-32 h-24 object-cover rounded shadow preview-image"
+            />
+          )}
+          <label className="file-upload-label">
+            Choose Photo
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => handleTripPhotoUpload(e, index)}
+            />
+          </label>
+          <button
+            onClick={() => removePhotoBox(index)}
+            className="circle-remove-btn"
+          >
+            -
+          </button>
+        </div>
+      ))}
+    <button
+      onClick={addPhotoBox}
+      className="add-photo-btn"
+    >
+      + Add Trip Photo
+    </button>
+  </>
+)}
 
-                </div>
-              ))}
-            <button
-              onClick={addPhotoBox}
-              className="edit-button mt-2 text-green-500"
-            >
-              + Add Photo
-            </button>
-          </>
-        )}
 
         {!editState.tripPhotos &&
           trip.tripPhotos &&

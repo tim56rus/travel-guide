@@ -22,8 +22,8 @@
   }
   
   .trip-section h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
+    font-size: 2rem;
+    font-weight: 700;
     color: #1e293b;
     margin-bottom: 0.5rem;
   }
@@ -117,3 +117,95 @@
   }
 
   
+  .trip-container {
+    background-color: #F6F1DE;
+    border: 2px solid #517c44;
+  }
+  
+  .trip-section {
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+  }
+  
+  .edit-button {
+    padding: 8px 12px;
+    background-color: #acd3a8;
+    color: #333;
+    border-radius: 50px;
+    font-weight: 500;
+    border: none;
+  }
+  
+  .edit-button:hover {
+    background-color: #95bd91;
+    color: #000;
+  }
+  
+  .remove-day-btn, .add-day-btn, .add-photo-btn {
+    padding: 8px 16px;
+    background-color: #acd3a8;
+    color: #333;
+    border: none;
+    border-radius: 50px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 1rem;
+  }
+  
+  .remove-day-btn:hover, .add-day-btn:hover, .add-photo-btn:hover {
+    background-color: #95bd91;
+  }
+  
+  .circle-remove-btn {
+    width: 30px;
+    height: 30px;
+    background-color: #8aac86;
+    color: #000;
+    border: none;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+  }
+  
+  .circle-remove-btn:hover {
+    background-color: #95bd91;
+  }
+  
+  .file-upload-label {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #acd3a8;
+    color: #333;
+    border-radius: 50px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    text-align: center;
+    transition: background-color 0.3s;
+  }
+  
+  .file-upload-label:hover {
+    background-color: #95bd91;
+  }
+  
+  .file-upload-label input[type="file"] {
+    display: none;
+  }
+  
+
+  .preview-image {
+    
+
+    
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 1rem;
+    margin-right: 1rem;
+  }
+

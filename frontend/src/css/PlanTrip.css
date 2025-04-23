@@ -17,12 +17,13 @@
   max-width: 900px; 
   width: 90%;
   padding: 2rem;
-  background: #f1ffee;
+  background: #F6F1DE;
   border-radius: 1rem;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
   position: relative;
   overflow-y: auto;
   max-height: 90vh;
+  border: 2px solid #517c44;
 }
 
 
@@ -33,6 +34,7 @@
   border-radius: 0.5rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 1rem;
+  margin-right:1rem;
 }
 
 
@@ -113,7 +115,7 @@
   .submit-btn {
     padding: 12px;
     background-color: #acd3a8;
-    color: #000;
+    color: #333;
     border: none;
     border-radius: 50px;
     font-weight: bold;
@@ -141,14 +143,15 @@
     display: inline-block;
     padding: 10px 20px;
     background-color: #acd3a8;
-    color: #000;
+    color: #333;
     border-radius: 50px;
-    font-weight: 500;
+    font-weight: 100;
     font-size: 14px;
     cursor: pointer;
     margin-top: 0.5rem;
     text-align: center;
     transition: background-color 0.3s;
+    
   }
   
   .file-upload-label:hover {
@@ -163,7 +166,7 @@
   .add-day-btn {
     padding: 8px 16px;
     background-color: #acd3a8;
-    color: #000;
+    color: #333;
     border: none;
     border-radius: 50px;
     font-weight: 500;
@@ -206,6 +209,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: 10px;
+
   }
   
   .circle-remove-btn:hover {
