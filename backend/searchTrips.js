@@ -27,7 +27,7 @@ module.exports = async function searchTripsAPI(req, res) {
     try {
       const trips = await db
         .collection("Trips")
-        .find({ owner: new ObjectId(userId) })
+        .find({ owner: userId })
         .toArray();
 
       const inRange = trips.filter(trip => {
@@ -49,31 +49,31 @@ module.exports = async function searchTripsAPI(req, res) {
   const regex = new RegExp(esc, "i");
 
   // build filter for name, location, or combined journal+itinerary
-  let filter;
-  if (byRaw === "name" || byRaw === "location") {
-    filter = { [byRaw]: regex };
-  } else if (byRaw === "journal") {
-    filter = {
-      $or: [
-        { journal: regex },
-        { "itinerary.day": regex },
-        { "itinerary.morning": regex },
-        { "itinerary.afternoon": regex },
-        { "itinerary.evening": regex },
-      ],
-    };
-  } else {
-    return res
-      .status(400)
-      .json({ error: "Invalid search field", data: null });
-  }
+let filter;
+if (byRaw === "name") {
+  filter = { name: regex };
+} else if (byRaw === "location") {
+  filter = { location: regex };
+} else if (byRaw === "journal") {
+  filter = {
+    $or: [
+      { journal:           regex },
+      { "itinerary.day":      regex },
+      { "itinerary.morning":  regex },
+      { "itinerary.afternoon":regex },
+      { "itinerary.evening":  regex },
+    ]
+  };
+} else {
+  return res.status(400).json({ error: "Invalid search field", data: null });
+}
 
   // run the query
   try {
     const data = await db
-      .collection("Trips")
-      .find({ owner: new ObjectId(userId), ...filter })
-      .toArray();
+		.collection("Trips")
+		.find({ owner: userId, ...filter })
+		.toArray();
     return res.status(200).json({ error: "", data });
   } catch (e) {
     return res.status(500).json({ error: e.toString(), data: null });
