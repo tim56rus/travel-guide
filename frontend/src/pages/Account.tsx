@@ -18,27 +18,43 @@ function Account() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleted, setDeleted] = useState(false);
   const [loading, setLoading] = useState(true);
+  
 
   // Session check on mount
   useEffect(() => {
-    (async () => {
-      try {
-        const res = await fetch("/api/checkSession", {
-          method: "GET",
-          credentials: "include",
-        });
-        const data = await res.json();
-        if (!data.userId) {
-          navigate("/login", { replace: true });
-        }
-      } catch (e) {
-        console.error("Session check failed", e);
-        navigate("/login", { replace: true });
-      } finally {
-        setLoading(false);
+  (async () => {
+    try {
+      // 1) session check
+      const res = await fetch("/api/checkSession", {
+        method: "GET",
+        credentials: "include",
+      });
+      const { userId } = await res.json();
+      if (!userId) {
+        return navigate("/login", { replace: true });
       }
-    })();
-  }, [navigate]);
+
+      // 2) load account data
+      const acctRes = await fetch("/api/account/populate", {
+        credentials: "include",
+      });
+      const { error: acctErr, data: acctData } = await acctRes.json();
+      if (acctErr) {
+        setError(acctErr);
+      } else {
+        setUsername(acctData.username);
+        setFirstName(acctData.firstName);
+        setLastName(acctData.lastName);
+        setEmail(acctData.email);
+      }
+    } catch (e) {
+      console.error("Session/account load failed", e);
+      navigate("/login", { replace: true });
+    } finally {
+      setLoading(false);
+    }
+  })();
+}, [navigate]);
 
   // Render loading state
   if (loading) {

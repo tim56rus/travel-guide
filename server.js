@@ -48,7 +48,7 @@ const accountUpdateAPI = require("./backend/accountUpdate");
 app.put("/api/account/update", accountUpdateAPI);
 
 const accountPopulateAPI = require("./backend/accountPopulate");
-app.get("/api/account/:userId", accountPopulateAPI);
+app.get("/api/account/populate", accountPopulateAPI);
 
 const checkSessionAPI = require("./backend/checkSession");
 app.get("/api/checkSession", checkSessionAPI);
