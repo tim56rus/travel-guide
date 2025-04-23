@@ -10,10 +10,20 @@ module.exports = async function searchTripsAPI(req, res) {
 
   // read params, defaulting `by` to "name"
   const byRaw = String(req.query.by || "name").toLowerCase();
-  const q     = req.query.q;
+    const q     = String(req.query.q || "").trim();
+  // if no query string, return *all* trips for this user
   if (!q) {
-    return res.status(400).json({ error: "Missing ‘q’ parameter", data: null });
+    try {
+      const all = await db
+        .collection("Trips")
+        .find({ owner: userId })
+        .toArray();
+      return res.status(200).json({ error: "", data: all });
+    } catch (e) {
+      return res.status(500).json({ error: e.toString(), data: null });
+    }
   }
+
 
   // handle date‐range search
   if (byRaw === "dates") {
