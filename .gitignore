@@ -4,3 +4,5 @@ RUNNING/
 .DS_Store
 .vscode
 *.swp
+frontend_dev.log
+start.log
