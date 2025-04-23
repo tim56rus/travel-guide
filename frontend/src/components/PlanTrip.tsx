@@ -236,13 +236,15 @@ const PlanPopup: React.FC<PlanPopupProps> = ({ onClose, onSubmit }) => {
           </div>
 
           {/* Journal Section */}
-
+          <div className="journal-section">
+          <h3>Journal</h3>
           <textarea
             name="journal"
             placeholder="Journal"
             value={journal}
             onChange={(e) => setJournal(e.target.value)}
           />
+          </div>
 
           {/* Trip Photos */}
           <div className="trip-photos-section">
