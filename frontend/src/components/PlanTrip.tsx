@@ -23,6 +23,7 @@ const PlanPopup: React.FC<PlanPopupProps> = ({ onClose, onSubmit }) => {
   const [coverPhoto, setCoverPhoto] = useState<string | null>(null);
   const [tripPhotos, setTripPhotos] = useState<string[]>([]);
   const [itinerary, setItinerary] = useState<ItineraryItem[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   const handleCoverPhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -82,6 +83,8 @@ const PlanPopup: React.FC<PlanPopupProps> = ({ onClose, onSubmit }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+
     const tripData = {
       name: tripName,
       location,
@@ -89,33 +92,30 @@ const PlanPopup: React.FC<PlanPopupProps> = ({ onClose, onSubmit }) => {
       endDate,
       flightInfo,
       journal,
-      image: coverPhoto,
+      coverPhoto,
       tripPhotos,
       itinerary,
     };
-    onSubmit(tripData);
-    onClose();
-  
 
-  // send to the new API
-  await fetch("/api/createTrip", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  credentials: "include",
-  body: JSON.stringify(tripData),
-});
+    try {
+      const res = await fetch('/api/createTrip', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(tripData),
+      });
+      const result = await res.json();
 
-  const result = await res.json();
-  if (result.error) {
-    // handle error…
-    console.error(result.error);
-  } else {
-    // success!
-    console.log("New trip ID:", result.tripId);
-    onClose();
-  }
-};
-
+      if (!res.ok) {
+        setError(result.error || 'Failed to create trip');
+      } else {
+        onSubmit(result);
+        onClose();
+      }
+    } catch (err: any) {
+      setError(err.message || 'Network error');
+    }
+  };
 
   return (
     <div className="popup-backdrop">
@@ -124,6 +124,7 @@ const PlanPopup: React.FC<PlanPopupProps> = ({ onClose, onSubmit }) => {
           ✕
         </button>
         <h2>Plan Your Future Trip</h2>
+		{error && <div className="error-msg">{error}</div>}
         <form className="trip-form" onSubmit={handleSubmit}>
           <input
             name="name"
@@ -236,7 +237,6 @@ const PlanPopup: React.FC<PlanPopupProps> = ({ onClose, onSubmit }) => {
           </div>
 
           {/* Journal Section */}
-          <div className="journal-section">
           <h3>Journal</h3>
           <textarea
             name="journal"
@@ -244,7 +244,6 @@ const PlanPopup: React.FC<PlanPopupProps> = ({ onClose, onSubmit }) => {
             value={journal}
             onChange={(e) => setJournal(e.target.value)}
           />
-          </div>
 
           {/* Trip Photos */}
           <div className="trip-photos-section">
