@@ -58,7 +58,7 @@ function DoSignup() {
 
   return (
     <div className="d-flex flex-column justify-content-center align-items-center">
-      <div className="text-center mb-4">
+      <div className="text-center">
         <img
           src={logo}
           alt="Logo"
