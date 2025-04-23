@@ -37,8 +37,8 @@ const dummyTrip: TripDetails = {
   tripPhotos: [],
 };
 
-const TripDetails = () => {
-  const { id } = useParams<{ id?: string }>();
+const TripDetails: React.FC = () => {
+  const { id: tripId } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [trip, setTrip] = useState<TripDetails | null>(null);
   const [editState, setEditState] = useState({
@@ -53,48 +53,27 @@ const TripDetails = () => {
   });
 
   useEffect(() => {
-    if (!id || id === 'dummy') {
-      setTrip(dummyTrip);
-      return;
-    }
-    // Fetch real data if needed
-  }, [id]);
+    const fetchTrip = async () => {
+      try {
+        const response = await fetch(`/api/searchTrips?q=`, {
+          method: 'GET',
+          credentials: 'include',
+        });
+        const result = await response.json();
+        const foundTrip = result.find((t: any) => t._id === tripId);
+        setTrip(foundTrip || null);
+      } catch (error) {
+        console.error('Failed to fetch trip:', error);
+      }
+    };
+
+    if (tripId) fetchTrip();
+  }, [tripId]);
 
   const handleInputChange = (key: keyof TripDetails, value: any) => {
     if (!trip) return;
     setTrip({ ...trip, [key]: value });
   };
-
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const file = event.target.files?.[0];
-    if (file && trip) {
-      const updatedPhotos = [...(trip.tripPhotos || [])];
-      const imageUrl = URL.createObjectURL(file); // Create a temporary URL for preview
-      updatedPhotos[index] = imageUrl;
-      setTrip({ ...trip, tripPhotos: updatedPhotos });
-    }
-  };
-
-  const addItineraryDay = () => {
-    if (!trip) return;
-    const newDay: ItineraryItem = { day: `Day ${trip.itinerary.length + 1}`, morning: '', afternoon: '', evening: '' };
-    setTrip({ ...trip, itinerary: [...trip.itinerary, newDay] });
-  };
-  
-  const removeItineraryDay = (index: number) => {
-    if (!trip) return;
-    const updatedItinerary = [...trip.itinerary];
-    updatedItinerary.splice(index, 1);
-    setTrip({ ...trip, itinerary: updatedItinerary });
-  };
-  
-  const handleItineraryChange = (index: number, key: keyof ItineraryItem, value: string) => {
-    if (!trip) return;
-    const updatedItinerary = [...trip.itinerary];
-    updatedItinerary[index] = { ...updatedItinerary[index], [key]: value };
-    setTrip({ ...trip, itinerary: updatedItinerary });
-  };
-  
 
   const handleCoverUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -103,7 +82,7 @@ const TripDetails = () => {
       setTrip({ ...trip, image: imageUrl });
     }
   };
-  
+
   const handleTripPhotoUpload = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const file = event.target.files?.[0];
     if (file && trip) {
@@ -113,7 +92,6 @@ const TripDetails = () => {
       setTrip({ ...trip, tripPhotos: updatedPhotos });
     }
   };
-  
 
   const addPhotoBox = () => {
     if (!trip) return;
@@ -127,58 +105,52 @@ const TripDetails = () => {
     setTrip({ ...trip, tripPhotos: updatedPhotos });
   };
 
+  const addItineraryDay = () => {
+    if (!trip) return;
+    const newDay: ItineraryItem = { day: `Day ${trip.itinerary.length + 1}`, morning: '', afternoon: '', evening: '' };
+    setTrip({ ...trip, itinerary: [...trip.itinerary, newDay] });
+  };
+
+  const removeItineraryDay = (index: number) => {
+    if (!trip) return;
+    const updatedItinerary = [...trip.itinerary];
+    updatedItinerary.splice(index, 1);
+    setTrip({ ...trip, itinerary: updatedItinerary });
+  };
+
+  const handleItineraryChange = (index: number, key: keyof ItineraryItem, value: string) => {
+    if (!trip) return;
+    const updatedItinerary = [...trip.itinerary];
+    updatedItinerary[index] = { ...updatedItinerary[index], [key]: value };
+    setTrip({ ...trip, itinerary: updatedItinerary });
+  };
+
   if (!trip) return <p className="text-center mt-10">Trip not found</p>;
 
   return (
-    <div className="trip-container max-w-5xl mx-auto p-6 rounded-xl shadow space-y-8" style = {{backgroundColor: '#F6F1DE'}}>
-      <button onClick={() => navigate(-1)} className="back-button">
-        ← Back
-      </button>
+    <div className="trip-container max-w-5xl mx-auto p-6 rounded-xl shadow space-y-8" style={{ backgroundColor: '#F6F1DE' }}>
+      <button onClick={() => navigate(-1)} className="back-button">← Back</button>
 
       {/* Trip Name & Date Range */}
       <section className="trip-section">
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-semibold text-slate-800">
-            Trip Information
-          </h2>
-          <button
-            className="edit-button"
-            onClick={() =>
-              setEditState({ ...editState, name: !editState.name })
-            }
-          >
+          <h2 className="text-2xl font-semibold text-slate-800">Trip Information</h2>
+          <button className="edit-button" onClick={() => setEditState({ ...editState, name: !editState.name })}>
             {editState.name ? "Save" : "Edit"}
           </button>
         </div>
         {editState.name ? (
           <>
-            <input
-              value={trip.name}
-              onChange={(e) => handleInputChange("name", e.target.value)}
-              className="mt-2 p-2 w-full border rounded"
-            />
+            <input value={trip.name} onChange={(e) => handleInputChange("name", e.target.value)} className="mt-2 p-2 w-full border rounded" />
             <div className="flex gap-2 mt-2">
-              <input
-                type="date"
-                value={trip.startDate}
-                onChange={(e) => handleInputChange("startDate", e.target.value)}
-                className="p-2 w-1/2 border rounded"
-              />
-              <input
-                type="date"
-                value={trip.endDate}
-                onChange={(e) => handleInputChange("endDate", e.target.value)}
-                className="p-2 w-1/2 border rounded"
-              />
+              <input type="date" value={trip.startDate} onChange={(e) => handleInputChange("startDate", e.target.value)} className="p-2 w-1/2 border rounded" />
+              <input type="date" value={trip.endDate} onChange={(e) => handleInputChange("endDate", e.target.value)} className="p-2 w-1/2 border rounded" />
             </div>
           </>
         ) : (
           <>
             <p className="mt-2 text-lg text-slate-700">{trip.name}</p>
-            <p className="text-sm text-slate-500">
-              Dates: {new Date(trip.startDate).toDateString()} -{" "}
-              {new Date(trip.endDate).toDateString()}
-            </p>
+            <p className="text-sm text-slate-500">Dates: {new Date(trip.startDate).toDateString()} - {new Date(trip.endDate).toDateString()}</p>
           </>
         )}
       </section>
