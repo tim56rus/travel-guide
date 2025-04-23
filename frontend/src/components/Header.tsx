@@ -1,8 +1,34 @@
 import '../css/Header.css';
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 function Header() {
   const navigate = useNavigate();
+
+  const [user, setUser] = useState<{
+    firstName: string;
+    lastName: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch("/api/accountPopulate", {
+          credentials: "include"
+        });
+        const json = await res.json();
+        if (res.ok && json.data) {
+          setUser(json.data);
+        } else {
+          console.error("Failed to fetch user data");
+        }
+      } catch (err) {
+        console.error("Error fetching user:", err);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -43,7 +69,7 @@ function Header() {
         <span id="userName" style={{
           fontSize: '20px', paddingRight: '5px', fontWeight: '500', position: 'relative', top: '2px'
           }}>
-            User</span>
+            {user ? `${user.firstName} ${user.lastName}` : "Welcome"}</span>
 
         <button
           className="btn p-0 border-0 bg-transparent"
