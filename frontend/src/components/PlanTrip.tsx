@@ -15,6 +15,7 @@ type PlanPopupProps = {
 
 const PlanPopup: React.FC<PlanPopupProps> = ({ onClose, onSubmit }) => {
   const [tripName, setTripName] = useState("");
+  const [location, setLocation] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [flightInfo, setFlightInfo] = useState("");
@@ -80,18 +81,21 @@ const PlanPopup: React.FC<PlanPopupProps> = ({ onClose, onSubmit }) => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-
-  const tripData = {
-    name: tripName,
-    startDate,
-    endDate,
-    flightInfo,
-    journal,
-    image: coverPhoto,
-    tripPhotos,
-    itinerary,
-  };
+    e.preventDefault();
+    const tripData = {
+      name: tripName,
+      location,
+      startDate,
+      endDate,
+      flightInfo,
+      journal,
+      image: coverPhoto,
+      tripPhotos,
+      itinerary,
+    };
+    onSubmit(tripData);
+    onClose();
+  
 
   // send to the new API
   await fetch("/api/createTrip", {
@@ -129,6 +133,16 @@ const PlanPopup: React.FC<PlanPopupProps> = ({ onClose, onSubmit }) => {
             onChange={(e) => setTripName(e.target.value)}
             required
           />
+
+          <input
+            name="location"
+            type="text"
+            placeholder="Location(s)"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            required
+          />
+          
 
           <div className="flex-row">
             <input
