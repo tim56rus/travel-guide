@@ -44,7 +44,7 @@ const createTrip = [
       const coverPhoto = req.files?.['coverPhoto']?.[0]?.filename || null;
       const tripPhotos = req.files?.['tripPhotos']?.map(file => file.filename) || [];
 
-      const baseUrl = `https://lp.poosdisfun.xyz/uploads/${userId}/`;
+      const baseUrl = `/uploads/${userId}/`;
       const coverPhotoUrl = coverPhoto ? baseUrl + coverPhoto : null;
       const photoUrls = tripPhotos.map(filename => baseUrl + filename);
 
