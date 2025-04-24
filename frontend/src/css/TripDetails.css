@@ -78,16 +78,24 @@
   
   .back-button {
     font-size: 0.95rem;
-    color: #0ea5e9;
-    margin-bottom: 1rem;
+    color: #517c44; 
+    background-color: #acd3a8; 
+    padding: 8px 16px;
+    border: none;
+    border-radius: 50px;
+    font-weight: 500;
+    cursor: pointer;
     display: inline-block;
-    transition: color 0.2s ease;
+    margin-bottom: 1rem;
+    transition: background-color 0.3s ease, color 0.2s ease;
   }
   
   .back-button:hover {
-    color: #0284c7;
-    text-decoration: underline;
+    background-color: #95bd91;
+    color: #000; 
+    text-decoration: none; 
   }
+  
   
   .trip-section img {
     max-width: 100%;
