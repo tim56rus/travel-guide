@@ -105,6 +105,10 @@ const TripDetails: React.FC = () => {
     setTrip({ ...trip, tripPhotos: updated });
   };
 
+  const toUTCDateString = (dateStr: string) => {
+    return new Date(dateStr).toLocaleDateString('en-CA', { timeZone: 'UTC' });
+  };
+
   const handleSaveAndBack = async () => {
     if (!trip) {
       navigate(-1);
@@ -162,7 +166,7 @@ const TripDetails: React.FC = () => {
           <>
             <p className="mt-2 text-lg text-slate-700">{trip.name}</p>
             <p className="text-sm text-slate-500">
-              Dates: {new Date(trip.startDate).toDateString()} - {new Date(trip.endDate).toDateString()}
+              Dates: {toUTCDateString(trip.startDate)} - {toUTCDateString(trip.endDate)}
             </p>
           </>
         )}
