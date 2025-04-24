@@ -15,6 +15,8 @@ const FilterTrips = () => {
         : [...prev, filter]
     );
   };
+  const setSort = (sort:string) => onChange(selectedFilters, sort, sortDirection);
+  const setDir  = (dir:'asc'|'desc') => onChange(selectedFilters, selectedSort, dir);
 
   return (
     <div className="d-flex gap-2 flex-wrap mb-3 justify-content-center p-2">
@@ -113,3 +115,4 @@ const FilterTrips = () => {
 };
 
 export default FilterTrips;
+

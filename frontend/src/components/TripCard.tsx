@@ -57,11 +57,8 @@ function TripCard({ trip }: TripCardProps) {
       });
 
       if (res.ok) {
-        // Option 1: Refresh the page
         window.location.reload();
 
-        // Option 2 (better): Use a prop to notify parent and remove the trip from state
-        // onTripDeleted(trip._id);
       } else {
         const errorData = await res.json();
         alert(`Failed to delete trip: ${errorData.error}`);
