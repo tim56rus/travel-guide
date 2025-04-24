@@ -36,7 +36,7 @@ const TripDetails: React.FC = () => {
   useEffect(() => {
     const fetchTrip = async () => {
       try {
-        const res = await fetch(`/api/trips/${tripId}`);
+        const res = await fetch(`/api/searchTrips?by=id&q=${tripId}`);
         const data = await res.json();
         setTrip(data);
       } catch (error) {
