@@ -198,17 +198,17 @@ const TripDetails: React.FC = () => {
             />
             <div className="flex gap-2 mt-2">
               <input
-                type="date"
-                value={trip.startDate}
-                onChange={e => handleInputChange("startDate", e.target.value)}
-                className="p-2 w-1/2 border rounded"
-              />
+  type="date"
+  value={new Date(trip.startDate).toISOString().slice(0, 10)}
+  onChange={e => handleInputChange("startDate", e.target.value)}
+  className="p-2 w-1/2 border rounded"
+/>
               <input
-                type="date"
-                value={trip.endDate}
-                onChange={e => handleInputChange("endDate", e.target.value)}
-                className="p-2 w-1/2 border rounded"
-              />
+  type="date"
+  value={new Date(trip.endDate).toISOString().slice(0, 10)}
+  onChange={e => handleInputChange("endDate", e.target.value)}
+  className="p-2 w-1/2 border rounded"
+/>
             </div>
           </>
         ) : (
