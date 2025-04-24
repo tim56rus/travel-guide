@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../css/TripDetails.css';
 
-const MapView: React.FC<{ location: string }> = ({ location }) => (
-  <div style={{ height: '200px', backgroundColor: '#e0e0e0', margin: '1rem 0' }}>Map showing: {location}</div>
-);
+import MapView from '../components/MapView';
+
+
 
 type ItineraryItem = {
   day: string;
