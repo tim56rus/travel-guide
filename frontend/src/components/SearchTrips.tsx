@@ -4,55 +4,59 @@ import React, {
   useRef,
   KeyboardEvent,
   ChangeEvent,
-} from 'react';
+} from "react";
 
-import '../css/SearchTrips.css';
+import "../css/SearchTrips.css";
 
 type SearchTripsProps = {
   onSearch: (results: any[]) => void;
 };
 
 const categories = [
-  { label: 'Name',     value: 'name'     },
-  { label: 'Location', value: 'location' },
-  { label: 'Journal',  value: 'journal'  },
-  { label: 'Dates',    value: 'dates'    },
+  { label: "Name", value: "name" },
+  { label: "Location", value: "location" },
+  { label: "Journal", value: "journal" },
+  { label: "Dates", value: "dates" },
 ];
 
 export default function SearchTrips({ onSearch }: SearchTripsProps) {
-  const [query, setQuery]                   = useState('');
+  const [query, setQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [category, setCategory]             = useState<string>('');
-  const containerRef                        = useRef<HTMLDivElement>(null);
+  const [category, setCategory] = useState<string>("");
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Hide suggestions when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
         setShowSuggestions(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const performSearch = async (by = category) => {
     // Build query params dynamically
     const params = new URLSearchParams();
     if (by) {
-      params.append('by', by);
+      params.append("by", by);
     }
     if (query.trim()) {
-      params.append('q', query.trim());
+      params.append("q", query.trim());
     }
 
-    const url = '/api/searchTrips' + (params.toString() ? `?${params.toString()}` : '');
+    const url =
+      "/api/searchTrips" + (params.toString() ? `?${params.toString()}` : "");
     try {
-      const res = await fetch(url, { credentials: 'include' });
+      const res = await fetch(url, { credentials: "include" });
       const json = await res.json();
       onSearch(json.data || []);
     } catch (err) {
-      console.error('Search failed:', err);
+      console.error("Search failed:", err);
       onSearch([]);
     }
   };
@@ -64,7 +68,7 @@ export default function SearchTrips({ onSearch }: SearchTripsProps) {
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       setShowSuggestions(false);
       performSearch();
@@ -75,14 +79,14 @@ export default function SearchTrips({ onSearch }: SearchTripsProps) {
     <div
       ref={containerRef}
       style={{
-        position: 'relative',
-        display: 'flex',
-        justifyContent: 'center',
-        fontFamily: 'Montserrat',
-        padding: '0 1rem',
+        position: "relative",
+        display: "flex",
+        justifyContent: "center",
+        fontFamily: "Montserrat",
+        padding: "0 1rem",
       }}
     >
-      <div style={{ position: 'relative', width: '100%', maxWidth: '400px' }}>
+      <div style={{ position: "relative", width: "100%", maxWidth: "400px" }}>
         <input
           type="search"
           className="form-control"
@@ -93,10 +97,10 @@ export default function SearchTrips({ onSearch }: SearchTripsProps) {
           onKeyDown={handleKeyDown}
           maxLength={50}
           style={{
-            paddingRight: '2rem',
-            width: '100%',
+            paddingRight: "2rem",
+            width: "100%",
             zIndex: 2,
-            position: 'relative',
+            position: "relative",
           }}
         />
         <button
@@ -106,34 +110,25 @@ export default function SearchTrips({ onSearch }: SearchTripsProps) {
             setShowSuggestions(false);
             performSearch();
           }}
-          style={{
-            all: 'unset',
-            position: 'absolute',
-            right: '10px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            zIndex: 3,
-            cursor: 'pointer',
-          }}
         >
-          <i className="fas fa-search" style={{ color: 'gray' }} />
+          <i className="fas fa-search" />
         </button>
 
         {showSuggestions && (
           <div
             className="list-group"
             style={{
-              position: 'absolute',
-              top: '100%',
+              position: "absolute",
+              top: "100%",
               left: 0,
               right: 0,
               zIndex: 1,
-              backgroundColor: 'white',
-              border: '1px solid #ddd',
-              borderTop: 'none',
-              borderRadius: '0 0 8px 8px',
-              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-              cursor: 'pointer',
+              backgroundColor: "white",
+              border: "1px solid #ddd",
+              borderTop: "none",
+              borderRadius: "0 0 8px 8px",
+              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+              cursor: "pointer",
             }}
           >
             {categories.map((cat) => (
@@ -146,15 +141,16 @@ export default function SearchTrips({ onSearch }: SearchTripsProps) {
                   performSearch(cat.value);
                 }}
               >
-                <span style={{ fontWeight: 500 }}>"{query.trim()}"</span> in {cat.label}
+                <span style={{ fontWeight: 500 }}>"{query.trim()}"</span> in{" "}
+                {cat.label}
               </div>
             ))}
             <div
               className="list-group-item list-group-item-action"
               onClick={() => {
-                setCategory('');
+                setCategory("");
                 setShowSuggestions(false);
-                performSearch('');
+                performSearch("");
               }}
             >
               Search all
