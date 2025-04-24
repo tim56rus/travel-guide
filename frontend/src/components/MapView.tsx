@@ -19,7 +19,7 @@ const MapView: React.FC<MapViewProps> = ({ location }) => {
       const initializeMap = new mapboxgl.Map({
         container: mapContainerRef.current,
         style: 'mapbox://styles/mapbox/streets-v12',
-        center: [-81.19861, 28.59861], // Default to UCF
+        center: [-81.19861, 28.59861], // Default center (UCF)
         zoom: 10,
       });
 
@@ -31,47 +31,18 @@ const MapView: React.FC<MapViewProps> = ({ location }) => {
     }
   }, []);
 
-  useEffect(() => {
-    const fetchInitialLocation = async () => {
-      if (!location || !map) return;
-
-      const response = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
-          location
-        )}.json?access_token=${mapboxgl.accessToken}`
-      );
-      const data = await response.json();
-
-      if (data.features && data.features.length > 0) {
-        const [lng, lat] = data.features[0].geometry.coordinates;
-        map.flyTo({ center: [lng, lat], zoom: 13 });
-
-        if (markerRef.current) {
-          markerRef.current.remove();
-        }
-
-        markerRef.current = new mapboxgl.Marker()
-          .setLngLat([lng, lat])
-          .addTo(map);
-      }
-    };
-
-    fetchInitialLocation();
-  }, [location, map]);
-
-  const handleSearch = async () => {
-    if (!city || !map) return;
+  const fetchAndDisplayLocation = async (loc: string) => {
+    if (!loc || !map) return;
 
     const response = await fetch(
       `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
-        city
+        loc
       )}.json?access_token=${mapboxgl.accessToken}`
     );
     const data = await response.json();
 
     if (data.features && data.features.length > 0) {
       const [lng, lat] = data.features[0].geometry.coordinates;
-
       map.flyTo({ center: [lng, lat], zoom: 13 });
 
       if (markerRef.current) {
@@ -81,9 +52,19 @@ const MapView: React.FC<MapViewProps> = ({ location }) => {
       markerRef.current = new mapboxgl.Marker()
         .setLngLat([lng, lat])
         .addTo(map);
-    } else {
-      alert('City not found!');
     }
+  };
+
+  useEffect(() => {
+    fetchAndDisplayLocation(location);
+  }, [location, map]);
+
+  const handleSearch = () => {
+    fetchAndDisplayLocation(city);
+  };
+
+  const handleBackToLocation = () => {
+    fetchAndDisplayLocation(location);
   };
 
   return (
@@ -95,8 +76,11 @@ const MapView: React.FC<MapViewProps> = ({ location }) => {
         placeholder="Enter a city"
         style={{ padding: '0.5rem', width: '200px', marginRight: '10px' }}
       />
-      <button onClick={handleSearch} style={{ padding: '0.5rem 1rem' }}>
+      <button onClick={handleSearch} style={{ padding: '0.5rem 1rem', marginRight: '10px' }}>
         Show on Map
+      </button>
+      <button onClick={handleBackToLocation} style={{ padding: '0.5rem 1rem', backgroundColor: '#acd3a8', border: 'none', borderRadius: '50px', fontWeight: 500 }}>
+        Back to Location
       </button>
       <div
         ref={mapContainerRef}
@@ -107,4 +91,3 @@ const MapView: React.FC<MapViewProps> = ({ location }) => {
 };
 
 export default MapView;
-
