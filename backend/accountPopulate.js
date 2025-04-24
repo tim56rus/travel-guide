@@ -27,6 +27,7 @@ module.exports = async function accountPopulateAPI(req, res) {
       firstName: user.FirstName,
       lastName:  user.LastName,
       email:     user.Email,
+	  profilePic: user.ProfilePic,
     };
 
     return res.status(200).json({ error: "", data: userData });

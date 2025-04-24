@@ -37,6 +37,7 @@ module.exports = async function signupAPI(req, res) {
         Username: username,
         Email: email.toLowerCase(),
         Password: password,
+		ProfilePic: ""
       };
 
       await db.collection("Users").insertOne(newUser);
