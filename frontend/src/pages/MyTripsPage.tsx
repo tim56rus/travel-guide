@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import SearchTrips from '../components/SearchTrips';
@@ -10,30 +10,31 @@ const MyTripsPage: React.FC = () => {
   const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [trips, setTrips] = useState<any[]>([]); // ideally use a typed `Trip[]`
+  const [trips, setTrips] = useState<any[]>([]);
   const [filteredTrips, setFilteredTrips] = useState<any[]>([]);
-
   const [searchActive, setSearchActive] = useState(false);
 
-
-  useEffect(() => {
-    const fetchTrips = async () => {
-      try {
-        const res = await fetch("/api/searchTrips", { credentials: "include" });
-        const json = await res.json();
-        if (res.ok && json.data) {
-          setTrips(json.data); 
-          setFilteredTrips(json.data);
-        } else {
-          console.error("Failed to fetch trips");
-        }
-      } catch (err) {
-        console.error("Error fetching trips:", err);
+  // 1) Pull fetchTrips out so we can reuse it
+  const fetchTrips = useCallback(async () => {
+    try {
+      const res = await fetch("/api/searchTrips", { credentials: "include" });
+      const json = await res.json();
+      if (res.ok && json.data) {
+        setTrips(json.data);
+        setFilteredTrips(json.data);
+        setSearchActive(false);
+      } else {
+        console.error("Failed to fetch trips");
       }
-    };
-
-    fetchTrips();
+    } catch (err) {
+      console.error("Error fetching trips:", err);
+    }
   }, []);
+
+  // 2) Initial load
+  useEffect(() => {
+    fetchTrips();
+  }, [fetchTrips]);
 
   // Session check on mount
   useEffect(() => {
@@ -87,13 +88,19 @@ const MyTripsPage: React.FC = () => {
           My Trips
         </h1>
 
-        <SearchTrips onSearch={(results) => {
-          setFilteredTrips(results);
-          setSearchActive(true); 
-        }} />
+        <SearchTrips
+          onSearch={(results) => {
+            setFilteredTrips(results);
+            setSearchActive(true);
+          }}
+        />
+
         <FilterTrips />
-        <TripsGrid trips={filteredTrips}
-          onAddTrip={() => setShowPopup(true)} />
+
+        <TripsGrid
+          trips={filteredTrips}
+          onAddTrip={() => setShowPopup(true)}
+        />
 
         {searchActive && filteredTrips.length === 0 && (
           <div style={{ textAlign: 'center', padding: '2rem', fontFamily: 'Montserrat', fontSize: '20px' }}>
@@ -101,7 +108,12 @@ const MyTripsPage: React.FC = () => {
           </div>
         )}
 
-        {showPopup && <PlanTrip onClose={() => setShowPopup(false)} />}
+        {showPopup && (
+          <PlanTrip
+            onClose={() => setShowPopup(false)}
+            onSearch={fetchTrips}    // ← pass fetchTrips here so onSearch is defined
+          />
+        )}
       </div>
     </div>
   );
