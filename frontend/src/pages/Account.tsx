@@ -250,24 +250,7 @@ function Account() {
                       }}
                     />
                     {/* Overlay on hover */}
-                    <div
-                      className="overlay d-flex justify-content-center align-items-center rounded-circle"
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: "100px",
-                        height: "100px",
-                        backgroundColor: "rgba(0, 0, 0, 0.4)",
-                        color: "white",
-                        fontSize: "24px",
-                        fontWeight: "bold",
-                        opacity: 0,
-                        transition: "opacity 0.3s ease",
-                      }}
-                    >
-                      Change
-                    </div>
+                    <div className="overlay rounded-circle">Change</div>
                   </>
                 ) : (
                   <div
@@ -398,12 +381,23 @@ function Account() {
           </button>
         </form>
 
-        <p className="text-center mt-3 d-flex justify-content-center align-items-center gap-2">
-          <button className="btn btn-link p-0" onClick={handleLogout}>
+        <p
+          className="text-center mt-3 d-flex justify-content-center align-items-center gap-2"
+          style={{ fontSize: "16px", lineHeight: "1.5" }}
+        >
+          <button
+            className="btn btn-link p-0 m-0 align-middle"
+            style={{ fontSize: "16px", lineHeight: "1.5" }}
+            onClick={handleLogout}
+          >
             Log out
           </button>
-          <span style={{ fontSize: "20px" }}>•</span>
-          <Link to="/MyTrips" className="btn btn-link p-0">
+          <span style={{ fontSize: "20px", padding: "0 5px" }}>•</span>
+          <Link
+            to="/MyTrips"
+            className="btn btn-link p-0 m-0 align-middle"
+            style={{ fontSize: "16px", lineHeight: "1.5" }}
+          >
             Main Page
           </Link>
         </p>
