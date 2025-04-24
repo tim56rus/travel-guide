@@ -8,6 +8,7 @@ function Header() {
   const [user, setUser] = useState<{
     firstName: string;
     lastName: string;
+    profilePic?: string;
   } | null>(null);
 
   useEffect(() => {
@@ -30,6 +31,13 @@ function Header() {
     fetchUser();
   }, []);
 
+   // Helper to convert upload path to serve URL
+   const getServeUrl = (uploadPath: string) => {
+    const parts = uploadPath.replace(/^\//, '').split('/');
+    const [, owner, ...rest] = parts;
+    return `/api/servePhotos/${owner}/${rest.join('/')}`;
+  };
+
   const handleLogout = async () => {
     try {
       await fetch("/api/logout", {
@@ -42,6 +50,9 @@ function Header() {
       console.error("Logout failed:", error);
     }
   };
+
+  const profileImgSrc = user?.profilePic ? getServeUrl(user.profilePic) : "/defaultIcon.png";
+
 
   return (
     // header background
@@ -78,7 +89,7 @@ function Header() {
           aria-expanded="false"
         >
           <img
-            src="/defaultIcon.png"
+            src={profileImgSrc}
             alt="User Mangement"
             style={{
               width: '40px',
