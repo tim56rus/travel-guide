@@ -23,7 +23,7 @@ const createTrip = [
       const coverPhoto = req.files?.['coverPhoto']?.[0]?.filename || null;
       const photos = req.files?.['photos']?.map(file => file.filename) || [];
 
-      const baseUrl = `http://54.196.120.115:5000/uploads/${userId}/`;
+      const baseUrl = `https://lp.poosdisfun.xyz/uploads/${userId}/`;
       const coverPhotoUrl = coverPhoto ? baseUrl + coverPhoto : null;
       const photoUrls = photos.map(filename => baseUrl + filename);
 
@@ -148,7 +148,7 @@ const updateTrip = [
       if (dateRange) updates.dateRange = dateRange;
       if (notes) updates.notes = notes;
 
-      const baseUrl = `http://54.196.120.115:5000/uploads/${userId}/`;
+      const baseUrl = `https://lp.poosdisfun.xyz/uploads/${userId}/`;
       const coverPhoto = req.files?.['coverPhoto']?.[0]?.filename;
       const photos = req.files?.['photos']?.map(file => file.filename);
 
