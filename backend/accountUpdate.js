@@ -7,7 +7,7 @@ module.exports = async function accountUpdateAPI(req, res) {
 
   // Destructure the fields from the request body.
   // Here we assume that userId is provided (e.g., from client input or session middleware)
-  const { userId, username, email, firstName, lastName, password, newPassword, confirmNewPassword } = req.body;
+  const { userId, username, email, firstName, lastName, password, newPassword, confirmNewPassword, profilePic } = req.body;
 
   // Validate required account fields.
   if (!userId || !username || !email || !firstName || !lastName) {
@@ -73,6 +73,11 @@ module.exports = async function accountUpdateAPI(req, res) {
         return res.status(200).json({ error, success });
       }
       updateData.Password = newPassword;
+    }
+	
+	// Update profile pic
+	if (profilePic && typeof profilePic === "string") {
+      updateData.ProfilePic = profilePic;
     }
 
     // Update the user record.
