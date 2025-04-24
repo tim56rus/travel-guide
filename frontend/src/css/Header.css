@@ -1,6 +1,16 @@
-.dropdown-item:active {
-  background-color: grey !important;
+.dropdown-menu-custom li:hover {
+  background-color: #acffc7;
 }
+
+.dropdown-item:active {
+  background-color: #8fd8aa; /* Slightly darker than hover */
+  color: #333;
+}
+
+.dropdown-item {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
 
 .header-container {
   position: sticky;

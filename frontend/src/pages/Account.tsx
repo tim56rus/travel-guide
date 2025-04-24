@@ -382,20 +382,20 @@ function Account() {
         </form>
 
         <p
-          className="text-center mt-3 d-flex justify-content-center align-items-center gap-2"
+          className="text-center mt-3"
           style={{ fontSize: "16px", lineHeight: "1.5" }}
         >
           <button
-            className="btn btn-link p-0 m-0 align-middle"
+            className="btn btn-link p-0 m-0"
             style={{ fontSize: "16px", lineHeight: "1.5" }}
             onClick={handleLogout}
           >
             Log out
           </button>
-          <span style={{ fontSize: "20px", padding: "0 5px" }}>•</span>
+          <span style={{ fontSize: "20px", padding: "0 10px" }}>•</span>
           <Link
             to="/MyTrips"
-            className="btn btn-link p-0 m-0 align-middle"
+            className="btn btn-link p-0 m-0"
             style={{ fontSize: "16px", lineHeight: "1.5" }}
           >
             Main Page
