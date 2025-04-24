@@ -97,7 +97,7 @@ export default function SearchTrips({ onSearch }: SearchTripsProps) {
           onKeyDown={handleKeyDown}
           maxLength={50}
           style={{
-            paddingRight: "2rem",
+            paddingRight: "3rem",
             width: "100%",
             zIndex: 2,
             position: "relative",
