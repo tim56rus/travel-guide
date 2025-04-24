@@ -17,7 +17,7 @@ const MyTripsPage: React.FC = () => {
   useEffect(() => {
     const fetchTrips = async () => {
       try {
-        const res = await fetch("/api/trips", { credentials: "include" });
+        const res = await fetch("/api/searchTrips", { credentials: "include" });
         const json = await res.json();
         if (res.ok && json.data) {
           setTrips(json.data); // assuming your API returns { data: Trip[] }
