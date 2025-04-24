@@ -13,7 +13,7 @@ type PlanPopupProps = {
   onSearch: () => void;
 };
 
-const PlanPopup: React.FC<PlanPopupProps> = ({ onClose }) => {
+const PlanPopup: React.FC<PlanPopupProps> = ({ onClose, onSearch }) => {
   const [tripName, setTripName] = useState("");
   const [location, setLocation] = useState("");
   const [startDate, setStartDate] = useState("");
