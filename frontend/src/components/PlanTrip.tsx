@@ -10,6 +10,7 @@ type ItineraryItem = {
 
 type PlanPopupProps = {
   onClose: () => void;
+  onSearch: () => void;
 };
 
 const PlanPopup: React.FC<PlanPopupProps> = ({ onClose }) => {
@@ -23,27 +24,6 @@ const PlanPopup: React.FC<PlanPopupProps> = ({ onClose }) => {
   const [tripPhotos, setTripPhotos] = useState<string[]>([]);
   const [itinerary, setItinerary] = useState<ItineraryItem[]>([]);
   const [error, setError] = useState<string | null>(null);
-
-	const performSearch = async (by = category) => {
-    // Build query params dynamically
-    const params = new URLSearchParams();
-    if (by) {
-      params.append('by', by);
-    }
-    if (query.trim()) {
-      params.append('q', query.trim());
-    }
-
-    const url = '/api/searchTrips' + (params.toString() ? `?${params.toString()}` : '');
-    try {
-      const res = await fetch(url, { credentials: 'include' });
-      const json = await res.json();
-      onSearch(json.data || []);
-    } catch (err) {
-      console.error('Search failed:', err);
-      onSearch([]);
-    }
-  };
 
   const handleCoverPhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -129,8 +109,9 @@ const PlanPopup: React.FC<PlanPopupProps> = ({ onClose }) => {
       if (!res.ok) {
         setError(result.error || 'Failed to create trip');
       } else {
+		onSearch();
         onClose();
-		performSearch();
+		
       }
     } catch (err: any) {
       setError(err.message || 'Network error');
