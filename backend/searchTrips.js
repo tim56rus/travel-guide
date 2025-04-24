@@ -8,9 +8,11 @@ module.exports = async function searchTripsAPI(req, res) {
     return res.status(401).json({ error: "Not authenticated", data: null });
   }
 
-  // read params, defaulting `by` to "name"
-  const byRaw = String(req.query.by || "name").toLowerCase();
-    const q     = String(req.query.q || "").trim();
+  // read params, defaulting `by` to "all" (search across all fields)
+  const byRaw = req.query.by
+    ? String(req.query.by).toLowerCase()
+    : "all";
+  const q = String(req.query.q || "").trim();
   // if no query string, return *all* trips for this user
   if (!q) {
     try {
@@ -78,25 +80,38 @@ module.exports = async function searchTripsAPI(req, res) {
   const esc   = String(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const regex = new RegExp(esc, "i");
 
-  // build filter for name, location, or combined journal+itinerary
-let filter;
-if (byRaw === "name") {
-  filter = { name: regex };
-} else if (byRaw === "location") {
-  filter = { location: regex };
-} else if (byRaw === "journal") {
-  filter = {
-    $or: [
-      { journal:           regex },
-      { "itinerary.day":      regex },
-      { "itinerary.morning":  regex },
-      { "itinerary.afternoon":regex },
-      { "itinerary.evening":  regex },
-    ]
-  };
-} else {
-  return res.status(400).json({ error: "Invalid search field", data: null });
-}
+ // build filter
+  let filter;
+  if (byRaw === "all") {
+    // search across name, location, journal and all itinerary fields
+    filter = {
+      $or: [
+        { name: regex },
+        { location: regex },
+        { journal: regex },
+        { "itinerary.day": regex },
+        { "itinerary.morning": regex },
+        { "itinerary.afternoon": regex },
+        { "itinerary.evening": regex },
+      ]
+    };
+} else if (byRaw === "name") {
+    filter = { name: regex };
+  } else if (byRaw === "location") {
+    filter = { location: regex };
+  } else if (byRaw === "journal") {
+    filter = {
+      $or: [
+        { journal: regex },
+        { "itinerary.day": regex },
+        { "itinerary.morning": regex },
+        { "itinerary.afternoon": regex },
+        { "itinerary.evening": regex },
+      ]
+    };
+  } else {
+    return res.status(400).json({ error: "Invalid search field", data: null });
+  }
 
   // run the query
   try {
