@@ -21,7 +21,7 @@ function TripCard({ trip }: TripCardProps) {
   const end = new Date(trip.endDate);
 
   const formattedDateRange =
-    start.toLocaleDateString("en-US", { month: "numeric", day: "numeric" }) +
+    start.toLocaleDateString("en-US", { month: "numeric", day: "numeric", year: "numeric" }) +
     " – " +
     end.toLocaleDateString("en-US", { month: "numeric", day: "numeric", year: "numeric" });
 
