@@ -12,31 +12,31 @@ interface Trip {
 
 interface TripCardProps {
   trip: Trip;
+  onTripsLoaded: (trips: any[]) => void;
 }
 
-function TripCard({ trip }: TripCardProps) {
+export default function TripCard({ trip, onTripsLoaded }: TripCardProps) {
   const navigate = useNavigate();
   const [showConfirm, setShowConfirm] = useState(false);
 
   const start = new Date(trip.startDate);
-  const end = new Date(trip.endDate);
+  const end   = new Date(trip.endDate);
 
   const formattedDateRange =
     start.toLocaleDateString("en-US", {
       month: "numeric",
       day: "numeric",
       year: "numeric",
-	  timeZone: "UTC"
+      timeZone: "UTC"
     }) +
     " – " +
     end.toLocaleDateString("en-US", {
       month: "numeric",
       day: "numeric",
       year: "numeric",
-	  timeZone: "UTC"
+      timeZone: "UTC"
     });
 
-  // Helper to convert upload path to serve URL
   const getServeUrl = (uploadPath: string) => {
     const parts = uploadPath.replace(/^\//, "").split("/");
     const [, owner, ...rest] = parts;
@@ -55,14 +55,20 @@ function TripCard({ trip }: TripCardProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: trip._id }),
       });
-
-      if (res.ok) {
-        window.location.reload();
-
-      } else {
+      if (!res.ok) {
         const errorData = await res.json();
         alert(`Failed to delete trip: ${errorData.error}`);
+        return;
       }
+
+      // fetch entire list with no query
+      const listRes = await fetch("/api/searchTrips", { credentials: "include" });
+      if (!listRes.ok) {
+        alert("Trip deleted, but failed to reload list.");
+        return;
+      }
+      const json = await listRes.json();
+      onTripsLoaded(json.data);
     } catch (error) {
       console.error("Error deleting trip:", error);
       alert("An error occurred while deleting the trip.");
@@ -70,7 +76,6 @@ function TripCard({ trip }: TripCardProps) {
   };
 
   return (
-    // individual trip card
     <div
       className="card overflow-hidden position-relative"
       style={{
@@ -84,21 +89,16 @@ function TripCard({ trip }: TripCardProps) {
       }}
       onClick={() => !showConfirm && navigate(`/TripDetails/${trip._id}`)}
     >
-      {/* Delete Button */}
       <button
         className="btn delete-btn btn-sm position-absolute"
         onClick={(e) => {
-          e.stopPropagation(); // prevents navigation
+          e.stopPropagation();
           setShowConfirm(true);
         }}
       >
-        <i
-          className="fa-regular fa-trash-can fa-lg"
-          style={{ color: "#c31313" }}
-        ></i>
+        <i className="fa-regular fa-trash-can fa-lg" style={{ color: "#c31313" }} />
       </button>
 
-      {/* Delete Confirmation Overlay */}
       {showConfirm && (
         <div className="confirm-overlay" onClick={(e) => e.stopPropagation()}>
           <p>Delete this trip?</p>
@@ -117,7 +117,6 @@ function TripCard({ trip }: TripCardProps) {
         </div>
       )}
 
-      {/* img part of card */}
       <div style={{ flex: "2 0 0" }}>
         <img
           className="card-img-top"
@@ -127,13 +126,12 @@ function TripCard({ trip }: TripCardProps) {
             width: "200px",
             height: "180px",
             objectFit: "cover",
-            margin: "0px",
-            padding: "0px",
+            margin: 0,
+            padding: 0,
           }}
         />
       </div>
 
-      {/* destination + date */}
       <div
         className="card-body"
         style={{
@@ -151,7 +149,7 @@ function TripCard({ trip }: TripCardProps) {
           style={{
             fontSize: "16px",
             paddingLeft: "5px",
-            margin: "0px",
+            margin: 0,
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -159,13 +157,10 @@ function TripCard({ trip }: TripCardProps) {
         >
           {trip.name}
         </h1>
-
-        <p className="card-text" style={{ paddingLeft: "5px", margin: "0px" }}>
+        <p className="card-text" style={{ paddingLeft: "5px", margin: 0 }}>
           {formattedDateRange}
         </p>
       </div>
     </div>
   );
 }
-
-export default TripCard;

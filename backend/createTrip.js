@@ -34,9 +34,15 @@ const createTrip = [
 	  
 	  let itineraryArr = [];
       if (itinerary) {
-        try {
-          itineraryArr = JSON.parse(itinerary);
-        } catch (e) {
+        if (typeof itinerary === 'string') {
+          try {
+            itineraryArr = JSON.parse(itinerary);
+          } catch (e) {
+            return res.status(400).json({ error: 'Invalid itinerary format' });
+          }
+        } else if (Array.isArray(itinerary)) {
+          itineraryArr = itinerary;
+        } else {
           return res.status(400).json({ error: 'Invalid itinerary format' });
         }
       }

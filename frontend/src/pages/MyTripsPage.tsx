@@ -108,7 +108,11 @@ const MyTripsPage: React.FC = () => {
           }}
         />
 
-        <TripsGrid trips={filteredTrips} onAddTrip={()=>setShowPopup(true)}/>
+        <TripsGrid
+          trips={filteredTrips}
+          onAddTrip={() => setShowPopup(true)}
+          onTripsLoaded={fetchTrips}     // ← add this prop
+        />
 
         {searchActive && filteredTrips.length===0 && (
           <div className="text-center p-4">No trips found…</div>
