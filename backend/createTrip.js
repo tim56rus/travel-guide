@@ -10,7 +10,7 @@ const { upload } = require('./fileManagement');
 const createTrip = [
   upload.fields([
     { name: 'coverPhoto', maxCount: 1 },
-    { name: 'photos', maxCount: 10 }
+    { name: 'tripPhotos', maxCount: 10 }
   ]),
   async (req, res) => {
     try {
