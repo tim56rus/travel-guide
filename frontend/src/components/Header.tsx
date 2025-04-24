@@ -55,57 +55,28 @@ function Header() {
 
 
   return (
-    // header background
-    <div 
-      style={{
-        position: 'sticky', top: '0', zIndex: '1000',
-        backgroundImage: 'linear-gradient(to right, #ACD3A8, #8AB2A6)',
-        display: 'flex',
-        justifyContent: 'space-between',
-        boxShadow: '0 0 4px 0 rgba(0, 0, 0, 0.08), 0 2px 4px 0 rgba(0, 0, 0, 0.12)'
-      }} 
-    > 
+    <div className="header-container">
       {/* logo */}
-      <img src="/WanderLogo.png" alt="Wander"
-        style={{
-          width: '200px'
-        }}
-      />
+      <img src="/WanderLogo.png" alt="Wander" className="header-logo" />
 
-      {/* user icon + dropdown for logout and user management */}
-      <div
-        className="d-flex align-items-center gap-2"
-        style={{padding: '5px', fontFamily: 'Montserrat'}}
-      >
-        <span id="userName" style={{
-          fontSize: '20px', paddingRight: '5px', fontWeight: '500', position: 'relative', top: '2px'
-          }}>
-            {user ? `${user.firstName} ${user.lastName}` : "Welcome"}</span>
+      {/* user icon + hover dropdown */}
+      <div className="header-user-section">
+        <span id="userName" className="header-username">
+          {user ? `${user.firstName} ${user.lastName}` : "Welcome"}
+        </span>
 
-        <button
-          className="btn p-0 border-0 bg-transparent"
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
+        <div className="dropdown-hover">
           <img
             src={profileImgSrc}
-            alt="User Mangement"
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              objectFit: 'cover',
-              border: '2px solid white',
-              marginTop: '5px', marginRight: '5px'
-            }}
+            alt="User Management"
+            className="header-profile-pic"
           />
-        </button>
-        <ul className="dropdown-menu dropdown-menu-end">
-          <li><a className="dropdown-item" href="/account">User Settings</a></li>
-          <li><hr className="dropdown-divider" /></li>
-          <li><button className="dropdown-item" onClick={handleLogout} style={{fontWeight:'bold'}}>Log Out</button></li>
-        </ul>
+          <ul className="dropdown-menu-custom">
+            <li><a className="dropdown-item" href="/account">User Settings</a></li>
+            <li><hr className="dropdown-divider" /></li>
+            <li><button className="dropdown-item" onClick={handleLogout} style={{fontWeight:'bold'}}>Log Out</button></li>
+          </ul>
+        </div>
       </div>
     </div>
   );

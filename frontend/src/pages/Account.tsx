@@ -2,6 +2,7 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import logo from "../assets/WanderImg.png";
 import "../css/TripDetails.css";
+import "../css/Account.css"; 
 
 // same uploader util you use elsewhere
 async function uploadToServer(file: File): Promise<string> {
@@ -27,21 +28,21 @@ function getServeUrl(uploadPath: string) {
 
 function Account() {
   const navigate = useNavigate();
-  const [firstName, setFirstName]     = useState("");
-  const [lastName, setLastName]       = useState("");
-  const [username, setUsername]       = useState("");
-  const [email, setEmail]             = useState("");
-  const [password, setPassword]       = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
-  const [error, setError]             = useState("");
-  const [success, setSuccess]         = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
-  const [profilePicPath, setProfilePicPath] = useState<string>("");  // store server path
+  const [profilePicPath, setProfilePicPath] = useState<string>(""); // store server path
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [deleted, setDeleted]         = useState(false);
-  const [loading, setLoading]         = useState(true);
-  const [userId, setUserId]           = useState<string>("");
+  const [deleted, setDeleted] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState<string>("");
 
   // on mount: check session, load account data
   useEffect(() => {
@@ -81,11 +82,15 @@ function Account() {
   }, [navigate]);
 
   if (loading) {
-    return <div style={{ textAlign: "center", marginTop: "2rem" }}>Loading…</div>;
+    return (
+      <div style={{ textAlign: "center", marginTop: "2rem" }}>Loading…</div>
+    );
   }
 
   // when user picks a new file, upload immediately
-  const handleProfilePictureChange = async (e: ChangeEvent<HTMLInputElement>) => {
+  const handleProfilePictureChange = async (
+    e: ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
     if (!file) return;
     try {
@@ -120,7 +125,7 @@ function Account() {
       lastName,
       password: password || "",
       newPassword: newPassword || "",
-      confirmNewPassword: confirmNewPassword || ""
+      confirmNewPassword: confirmNewPassword || "",
     };
     if (profilePicPath) {
       payload.profilePic = profilePicPath;
@@ -131,7 +136,7 @@ function Account() {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
       const { error: errMsg, success: successMsg } = await res.json();
       if (errMsg) {
@@ -155,7 +160,7 @@ function Account() {
     try {
       const res = await fetch("/api/account/delete", {
         method: "DELETE",
-        credentials: "include"
+        credentials: "include",
       });
       const { error: errMsg } = await res.json();
       if (errMsg) {
@@ -189,49 +194,100 @@ function Account() {
       >
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h2 className="mb-0">User Management</h2>
-          <img src={logo} alt="Logo" style={{ maxWidth: "70px", height: "auto" }} />
+          <img
+            src={logo}
+            alt="Logo"
+            style={{ maxWidth: "70px", height: "auto" }}
+          />
         </div>
 
-        {error    && <div className="alert alert-danger">{error}</div>}
-        {success  && <div className="alert alert-success">{success}</div>}
-        {deleted  && <div className="alert alert-danger">Your account has been deleted.</div>}
+        {error && <div className="alert alert-danger">{error}</div>}
+        {success && <div className="alert alert-success">{success}</div>}
+        {deleted && (
+          <div className="alert alert-danger">
+            Your account has been deleted.
+          </div>
+        )}
         {showDeleteConfirm && (
           <div className="alert alert-warning text-center">
-            <p>Are you sure you want to delete your account? This action cannot be undone.</p>
-            <button className="btn btn-danger me-2" onClick={confirmDeleteAccount}>Yes, Delete</button>
-            <button className="btn btn-secondary" onClick={cancelDeleteAccount}>Cancel</button>
+            <p>
+              Are you sure you want to delete your account? This action cannot
+              be undone.
+            </p>
+            <button
+              className="btn btn-danger me-2"
+              onClick={confirmDeleteAccount}
+            >
+              Yes, Delete
+            </button>
+            <button className="btn btn-secondary" onClick={cancelDeleteAccount}>
+              Cancel
+            </button>
           </div>
         )}
 
         <form onSubmit={handleUpdate}>
           <div className="row">
             <div className="mb-3 col-md-6 text-center">
-              {profilePicture ? (
-                <img
-                  src={profilePicture}
-                  alt="Profile"
-                  className="rounded-circle mb-2"
-                  style={{ width: "100px", height: "100px", objectFit: "cover", border: "3px solid #8AB2A6", cursor: "pointer" }}
-                  onClick={() => document.getElementById("profilePicInput")!.click()}
-                />
-              ) : (
-                <div
-                  className="rounded-circle mb-2 d-flex justify-content-center align-items-center"
-                  style={{
-                    width: "100px",
-                    height: "100px",
-                    border: "3px dashed #8AB2A6",
-                    backgroundColor: "#f0f0f0",
-                    fontSize: "32px",
-                    color: "#8AB2A6",
-                    cursor: "pointer",
-                    margin: "0 auto",
-                  }}
-                  onClick={() => document.getElementById("profilePicInput")!.click()}
-                >
-                  +
-                </div>
-              )}
+              <div
+                className="profile-pic-wrapper position-relative d-inline-block"
+                onClick={() =>
+                  document.getElementById("profilePicInput")!.click()
+                }
+                style={{ cursor: "pointer" }}
+              >
+                {profilePicture ? (
+                  <>
+                    <img
+                      src={profilePicture}
+                      alt="Profile"
+                      className="rounded-circle mb-2"
+                      style={{
+                        width: "100px",
+                        height: "100px",
+                        objectFit: "cover",
+                        border: "3px solid #8AB2A6",
+                      }}
+                    />
+                    {/* Overlay on hover */}
+                    <div
+                      className="overlay d-flex justify-content-center align-items-center rounded-circle"
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100px",
+                        height: "100px",
+                        backgroundColor: "rgba(0, 0, 0, 0.4)",
+                        color: "white",
+                        fontSize: "24px",
+                        fontWeight: "bold",
+                        opacity: 0,
+                        transition: "opacity 0.3s ease",
+                      }}
+                    >
+                      +
+                    </div>
+                  </>
+                ) : (
+                  <div
+                    className="rounded-circle mb-2 d-flex justify-content-center align-items-center"
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      border: "3px dashed #8AB2A6",
+                      backgroundColor: "#f0f0f0",
+                      fontSize: "32px",
+                      color: "#8AB2A6",
+                      cursor: "pointer",
+                      margin: "0 auto",
+                    }}
+                  >
+                    +
+                  </div>
+                )}
+              </div>
+
               <input
                 id="profilePicInput"
                 type="file"
@@ -247,7 +303,7 @@ function Account() {
                 type="text"
                 className="form-control custom-input"
                 value={username}
-                onChange={e => setUsername(e.target.value)}
+                onChange={(e) => setUsername(e.target.value)}
                 required
               />
             </div>
@@ -260,7 +316,7 @@ function Account() {
                 type="text"
                 className="form-control custom-input"
                 value={firstName}
-                onChange={e => setFirstName(e.target.value)}
+                onChange={(e) => setFirstName(e.target.value)}
                 required
               />
             </div>
@@ -270,7 +326,7 @@ function Account() {
                 type="text"
                 className="form-control custom-input"
                 value={lastName}
-                onChange={e => setLastName(e.target.value)}
+                onChange={(e) => setLastName(e.target.value)}
                 required
               />
             </div>
@@ -283,52 +339,71 @@ function Account() {
                 type="email"
                 className="form-control custom-input"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
             <div className="mb-3 col-md-6">
-              <label className="form-label text-start w-100">Current Password:</label>
+              <label className="form-label text-start w-100">
+                Current Password:
+              </label>
               <input
                 type="password"
                 className="form-control custom-input"
                 value={password}
-                onChange={e => setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
           </div>
 
           <div className="row">
             <div className="mb-3 col-md-6">
-              <label className="form-label text-start w-100">New Password:</label>
+              <label className="form-label text-start w-100">
+                New Password:
+              </label>
               <input
                 type="password"
                 className="form-control custom-input"
                 value={newPassword}
-                onChange={e => setNewPassword(e.target.value)}
+                onChange={(e) => setNewPassword(e.target.value)}
               />
             </div>
             <div className="mb-3 col-md-6">
-              <label className="form-label text-start w-100">Confirm New Password:</label>
+              <label className="form-label text-start w-100">
+                Confirm New Password:
+              </label>
               <input
                 type="password"
                 className="form-control custom-input"
                 value={confirmNewPassword}
-                onChange={e => setConfirmNewPassword(e.target.value)}
+                onChange={(e) => setConfirmNewPassword(e.target.value)}
               />
             </div>
           </div>
 
-          <button type="submit" className="btn w-100 mb-2" style={{ backgroundColor: "#8AB2A6", color: "white" }}>
+          <button
+            type="submit"
+            className="btn w-100 mb-2 btn-update"
+            style={{ backgroundColor: "#8AB2A6", color: "white" }}
+          >
             Update Information
           </button>
-          <button type="button" className="btn w-100" style={{ backgroundColor: "#c44c4c", color: "white" }} onClick={handleDeleteAccount}>
+          <button
+            type="button"
+            className="btn w-100 btn-delete"
+            style={{ backgroundColor: "#c44c4c", color: "white" }}
+            onClick={handleDeleteAccount}
+          >
             Delete Account
           </button>
         </form>
 
         <p className="text-center mt-3">
-          <button className="btn btn-link" onClick={handleLogout}>Log out</button> • Back to <Link to="/MyTrips">Main Page</Link>
+          <button className="btn btn-link" onClick={handleLogout}>
+            Log out
+          </button>{" "}
+          <span style={{ fontSize: "20px", padding: "0 10px" }}>•</span>{" "}
+          <Link to="/MyTrips">Main Page</Link>
         </p>
       </div>
     </div>

@@ -1,0 +1,27 @@
+.profile-pic-wrapper:hover .overlay {
+    opacity: 1;
+  }
+
+  
+.btn-update {
+    background-color: #8AB2A6;
+    color: white;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .btn-update:hover {
+    background-color: #7a9d91;
+    transform: scale(1.02);
+  }
+  
+  .btn-delete {
+    background-color: #c44c4c;
+    color: white;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .btn-delete:hover {
+    background-color: #a83838;
+    transform: scale(1.02);
+  }
+  
