@@ -63,8 +63,8 @@
     width: 200px;
     height: 180px;
     object-fit: cover;
-    border-radius: 10px;
-    border: 4px solid white;
+    
+    border: 6px solid white;
     box-sizing: border-box;
     
   }
