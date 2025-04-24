@@ -24,21 +24,11 @@ type TripDetails = {
   tripPhotos?: string[];
 };
 
-const dummyTrip: TripDetails = {
-  _id: 'dummy123',
-  name: 'Dream Trip',
-  location: 'Tokyo, Japan',
-  startDate: '2025-07-15',
-  endDate: '2025-07-22',
-  flightInfo: 'Flight JL062 - LAX to HND at 2:45 PM',
-  journal: `Can't wait to explore Tokyo. Planning to see temples, enjoy ramen, and stroll through Shibuya.`,
-  image: '',
-  itinerary: [],
-  tripPhotos: [],
-};
+
 
 const TripDetails: React.FC = () => {
   const { id: tripId } = useParams<{ id: string }>();
+
   const navigate = useNavigate();
   const [trip, setTrip] = useState<TripDetails | null>(null);
   const [editState, setEditState] = useState({
@@ -55,7 +45,7 @@ const TripDetails: React.FC = () => {
   useEffect(() => {
     const fetchTrip = async () => {
       try {
-        const response = await fetch(`/api/searchTrips?q=`, {
+        const response = await fetch(`/api/trips/${tripId}`, {
           method: 'GET',
           credentials: 'include',
         });

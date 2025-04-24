@@ -35,7 +35,7 @@ function TripCard({ trip }: TripCardProps) {
       width: '200px', height: '250px',
       fontFamily: 'Montserrat', fontSize: 'small'
     }}
-    onClick={() => !showConfirm && navigate(`/TripDetails/`)}
+    onClick={() => !showConfirm && navigate(`/TripDetails/${trip._id}`)}
     >
 
       {/* Delete Button */}
