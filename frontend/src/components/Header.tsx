@@ -1,6 +1,6 @@
 import '../css/Header.css';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 function Header() {
   const navigate = useNavigate();
@@ -10,6 +10,9 @@ function Header() {
     lastName: string;
     profilePic?: string;
   } | null>(null);
+
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const timeoutRef = useRef<any>(null); // Avoid NodeJS.Timeout
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -31,8 +34,7 @@ function Header() {
     fetchUser();
   }, []);
 
-   // Helper to convert upload path to serve URL
-   const getServeUrl = (uploadPath: string) => {
+  const getServeUrl = (uploadPath: string) => {
     const parts = uploadPath.replace(/^\//, '').split('/');
     const [, owner, ...rest] = parts;
     return `/api/servePhotos/${owner}/${rest.join('/')}`;
@@ -53,6 +55,16 @@ function Header() {
 
   const profileImgSrc = user?.profilePic ? getServeUrl(user.profilePic) : "/defaultIcon.png";
 
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setIsDropdownVisible(true);
+  };
+
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => {
+      setIsDropdownVisible(false);
+    }, 500); // Delay in ms before hiding
+  };
 
   return (
     <div className="header-container">
@@ -65,15 +77,18 @@ function Header() {
           {user ? `${user.firstName} ${user.lastName}` : "Welcome"}
         </span>
 
-        <div className="dropdown-hover">
+        <div 
+          className="dropdown-hover"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
           <img
             src={profileImgSrc}
             alt="User Management"
             className="header-profile-pic"
           />
-          <ul className="dropdown-menu-custom">
+          <ul className={`dropdown-menu-custom ${isDropdownVisible ? 'show' : ''}`}>
             <li><a className="dropdown-item" href="/account">User Settings</a></li>
-            {/*<li><hr className="dropdown-divider" /></li> */}
             <li><button className="dropdown-item" onClick={handleLogout} style={{fontWeight:'bold'}}>Log Out</button></li>
           </ul>
         </div>

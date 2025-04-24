@@ -2,7 +2,7 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import logo from "../assets/WanderImg.png";
 import "../css/TripDetails.css";
-import "../css/Account.css"; 
+import "../css/Account.css";
 
 // same uploader util you use elsewhere
 async function uploadToServer(file: File): Promise<string> {
@@ -266,7 +266,7 @@ function Account() {
                         transition: "opacity 0.3s ease",
                       }}
                     >
-                      +
+                      Change
                     </div>
                   </>
                 ) : (
@@ -398,12 +398,14 @@ function Account() {
           </button>
         </form>
 
-        <p className="text-center mt-3">
-          <button className="btn btn-link" onClick={handleLogout}>
+        <p className="text-center mt-3 d-flex justify-content-center align-items-center gap-2">
+          <button className="btn btn-link p-0" onClick={handleLogout}>
             Log out
-          </button>{" "}
-          <span style={{ fontSize: "20px", padding: "0 10px" }}>•</span>{"  "}
-          <Link to="/MyTrips">Main Page</Link>
+          </button>
+          <span style={{ fontSize: "20px" }}>•</span>
+          <Link to="/MyTrips" className="btn btn-link p-0">
+            Main Page
+          </Link>
         </p>
       </div>
     </div>
