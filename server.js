@@ -66,8 +66,8 @@ app.post("/api/createTrip", createTripAPI);
 const accountDeleteAPI = require("./backend/accountDelete");
 app.delete("/api/account/delete", accountDeleteAPI);
 
-//const tripDeleteAPI = require("./backend/tripDelete");
-//app.delete("/api/MyTrips/tripDelete", tripDeleteAPI);
+const tripDeleteAPI = require("./backend/tripDelete");
+app.delete("/api/MyTrips/tripDelete", tripDeleteAPI);
 
 //Need for accessing the uploads for display
 
