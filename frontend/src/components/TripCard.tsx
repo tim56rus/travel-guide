@@ -122,13 +122,7 @@ export default function TripCard({ trip, onTripsLoaded }: TripCardProps) {
           className="card-img-top"
           src={imageUrl}
           alt="Trip Cover"
-          style={{
-            width: "200px",
-            height: "180px",
-            objectFit: "cover",
-            margin: 0,
-            
-          }}
+          
         />
       </div>
 
