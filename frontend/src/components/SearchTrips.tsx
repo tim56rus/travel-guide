@@ -95,6 +95,7 @@ export default function SearchTrips({ onSearch }: SearchTripsProps) {
           value={query}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
+          onFocus={() => setShowSuggestions(true)}
           maxLength={50}
           style={{
             paddingRight: "3rem",
