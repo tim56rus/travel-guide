@@ -22,7 +22,7 @@ module.exports = async (req, res) => {
       endDate,
       flightInfo,
       journal,
-      image: coverPhoto,
+      coverPhoto,
       tripPhotos,
       itinerary,
     } = req.body;
