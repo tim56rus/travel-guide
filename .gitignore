@@ -6,3 +6,4 @@ RUNNING/
 *.swp
 frontend_dev.log
 start.log
+backend/uploads/

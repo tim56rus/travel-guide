@@ -13,16 +13,17 @@ module.exports = async function tripUpdateAPI(req, res) {
     return res.status(200).json({ error: "Not authenticated.", success });
   }
 
-  // pull fields out of the body
+  // pull fields out of the body — accept both `coverPhoto` and `image`
   const {
-    id,            // the trip’s ObjectId string
+    id,             // trip’s ObjectId string
     name,
     location,
     startDate,
     endDate,
     flightInfo,
     journal,
-    coverPhoto,
+    coverPhoto,     // client might send this
+    image,          // or this
     tripPhotos,
     itinerary,
   } = req.body;
@@ -44,36 +45,32 @@ module.exports = async function tripUpdateAPI(req, res) {
 
   try {
     // only let owner update
-    const trip = await db
+    const found = await db
       .collection("Trips")
       .findOne({ _id: oid, owner: userId });
 
-    if (!trip) {
+    if (!found) {
       error = "Trip not found or not owned by you.";
       return res.status(200).json({ error, success });
     }
 
-    // build the update
+    // build the updateData, prefer `coverPhoto` then `image`
     const updateData = {
-      name:       name,
-      location:   location,
+      name,
+      location,
       startDate:  new Date(startDate),
       endDate:    new Date(endDate),
-      flightInfo: flightInfo,
-      journal:    journal,
-      coverPhoto: coverPhoto || "",
+      flightInfo,
+      journal,
+      coverPhoto: coverPhoto || image || "",               // ← use whichever was sent
       tripPhotos: Array.isArray(tripPhotos) ? tripPhotos : [],
-      itinerary:  Array.isArray(itinerary) ? itinerary : [],
+      itinerary:  Array.isArray(itinerary)  ? itinerary  : [],
       updatedAt:  new Date(),
     };
 
-    // perform update
     await db
       .collection("Trips")
-      .updateOne(
-        { _id: oid },
-        { $set: updateData }
-      );
+      .updateOne({ _id: oid }, { $set: updateData });
 
     success = "Trip updated successfully.";
     return res.status(200).json({ error, success });

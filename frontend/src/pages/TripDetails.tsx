@@ -25,6 +25,7 @@ type ItineraryItem = {
 
 type TripDetailsType = {
   _id: string;
+  owner: string;
   name: string;
   location: string;
   startDate: string;
@@ -52,17 +53,24 @@ const TripDetails: React.FC = () => {
     tripPhotos: false,
   });
 
+  // helper to turn "/uploads/owner/filename" into "/api/servePhotos/owner/filename"
+  const getServeUrl = (uploadPath: string) => {
+    const parts = uploadPath.replace(/^\//, '').split('/');
+    const [, owner, ...rest] = parts;
+    return `/api/servePhotos/${owner}/${rest.join('/')}`;
+  };
+
   useEffect(() => {
     const fetchTrips = async () => {
       try {
         const res = await fetch('/api/searchTrips', { credentials: 'include' });
         const json = await res.json();
         if (res.ok && json.data) {
-          const foundTrip = json.data.find((t: TripDetailsType) => t._id === tripId);
-          setTrip(foundTrip);
+          const found = json.data.find((t: TripDetailsType) => t._id === tripId);
+          setTrip(found || null);
         }
-      } catch (error) {
-        console.error('Failed to fetch trip:', error);
+      } catch (err) {
+        console.error('Failed to fetch trip:', err);
       } finally {
         setLoading(false);
       }
@@ -93,19 +101,15 @@ const TripDetails: React.FC = () => {
     setTrip({ ...trip, itinerary: updated });
   };
 
-const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  console.log("🔔 handleCoverUpload fired", e.target.files);
-  if (!e.target.files?.length) return;
-  try {
-    const url = await uploadToServer(e.target.files[0]);
-    console.log("🔔 got URL back from server:", url);
-    setTrip(trip => trip && { ...trip, coverPhoto: url });
-  } catch (err) {
-    console.error("Cover upload failed:", err);
-  }
-};
-
-
+  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.length || !trip) return;
+    try {
+      const url = await uploadToServer(e.target.files[0]);
+      setTrip({ ...trip, coverPhoto: url });
+    } catch (err) {
+      console.error("Cover upload failed:", err);
+    }
+  };
 
   const addPhotoBox = () => {
     if (!trip) return;
@@ -118,26 +122,16 @@ const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setTrip({ ...trip, tripPhotos: updated });
   };
 
-  const handleTripPhotoUpload = async (
-  e: React.ChangeEvent<HTMLInputElement>,
-  index: number
-) => {
-  if (!e.target.files?.length) return;
-  try {
-    const url = await uploadToServer(e.target.files[0]);
-    setTrip(trip => {
-      if (!trip) return trip;
+  const handleTripPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    if (!e.target.files?.length || !trip) return;
+    try {
+      const url = await uploadToServer(e.target.files[0]);
       const photos = [...(trip.tripPhotos || [])];
       photos[index] = url;
-      return { ...trip, tripPhotos: photos };
-    });
-  } catch (err) {
-    console.error("Photo upload failed:", err);
-  }
-};
-
-  const toUTCDateString = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('en-CA', { timeZone: 'UTC' });
+      setTrip({ ...trip, tripPhotos: photos });
+    } catch (err) {
+      console.error("Photo upload failed:", err);
+    }
   };
 
   const handleSaveAndBack = async () => {
@@ -171,7 +165,7 @@ const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
   };
 
   if (loading) return <div>Loading...</div>;
-  if (!trip) return <div>Trip not found.</div>;
+  if (!trip)   return <div>Trip not found.</div>;
 
   return (
     <div className="trip-container max-w-5xl mx-auto p-6 rounded-xl shadow space-y-8" style={{ backgroundColor: '#F6F1DE' }}>
@@ -186,36 +180,35 @@ const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
           </button>
         </div>
         {editState.name ? (
-  <>
-    <input
-      value={trip.name}
-      onChange={e => handleInputChange("name", e.target.value)}
-      className="mt-2 p-2 w-full border rounded"
-    />
-    <div className="flex gap-2 mt-2">
-      <input
-        type="date"
-        value={trip.startDate ? trip.startDate.slice(0, 10) : ''}
-        onChange={e => handleInputChange("startDate", e.target.value)}
-        className="p-2 w-1/2 border rounded"
-      />
-      <input
-        type="date"
-        value={trip.endDate ? trip.endDate.slice(0, 10) : ''}
-        onChange={e => handleInputChange("endDate", e.target.value)}
-        className="p-2 w-1/2 border rounded"
-      />
-    </div>
-  </>
-) : (
-  <>
-    <p className="mt-2 text-lg text-slate-700">{trip.name}</p>
-    <p className="text-sm text-slate-500">
-      Dates: {new Date(trip.startDate).toLocaleDateString('en-CA', { timeZone: 'UTC' })} - {new Date(trip.endDate).toLocaleDateString('en-CA', { timeZone: 'UTC' })}
-    </p>
-  </>
-)}
-
+          <>
+            <input
+              value={trip.name}
+              onChange={e => handleInputChange("name", e.target.value)}
+              className="mt-2 p-2 w-full border rounded"
+            />
+            <div className="flex gap-2 mt-2">
+              <input
+                type="date"
+                value={trip.startDate}
+                onChange={e => handleInputChange("startDate", e.target.value)}
+                className="p-2 w-1/2 border rounded"
+              />
+              <input
+                type="date"
+                value={trip.endDate}
+                onChange={e => handleInputChange("endDate", e.target.value)}
+                className="p-2 w-1/2 border rounded"
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="mt-2 text-lg text-slate-700">{trip.name}</p>
+            <p className="text-sm text-slate-500">
+              Dates: {new Date(trip.startDate).toDateString()} - {new Date(trip.endDate).toDateString()}
+            </p>
+          </>
+        )}
       </section>
 
       {/* Location */}
@@ -227,7 +220,11 @@ const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
           </button>
         </div>
         {editState.location ? (
-          <input value={trip.location} onChange={e => handleInputChange("location", e.target.value)} className="mt-2 p-2 w-full border rounded" />
+          <input
+            value={trip.location}
+            onChange={e => handleInputChange("location", e.target.value)}
+            className="mt-2 p-2 w-full border rounded"
+          />
         ) : (
           <p className="mt-2 text-slate-700">{trip.location}</p>
         )}
@@ -243,15 +240,31 @@ const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         </div>
         {editState.coverPhoto ? (
           <>
-            {trip.coverPhoto && <img src={trip.coverPhoto} alt="Cover" className="w-full h-64 object-cover rounded-xl shadow mb-2" />}
+            {trip.coverPhoto && (
+              <img
+                src={getServeUrl(trip.coverPhoto)}
+                alt="Cover"
+                className="w-full h-64 object-cover rounded-xl shadow mb-2"
+              />
+            )}
             <label className="file-upload-label">
               Choose Cover Photo
               <input type="file" accept="image/*" onChange={handleCoverUpload} />
             </label>
-            {trip.coverPhoto && <button onClick={() => handleInputChange('coverPhoto', '')} className="remove-day-btn mt-2">Remove Cover Photo</button>}
+            {trip.coverPhoto && (
+              <button onClick={() => handleInputChange('coverPhoto', '')} className="remove-day-btn mt-2">
+                Remove Cover Photo
+              </button>
+            )}
           </>
         ) : (
-          trip.coverPhoto && <img src={trip.coverPhoto} alt={trip.name} className="w-full h-64 object-cover rounded-xl shadow" />
+          trip.coverPhoto && (
+            <img
+              src={getServeUrl(trip.coverPhoto)}
+              alt={trip.name}
+              className="w-full h-64 object-cover rounded-xl shadow"
+            />
+          )
         )}
       </section>
 
@@ -259,12 +272,16 @@ const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
       <section className="trip-section border p-4 rounded-xl bg-slate-50 shadow">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-semibold text-slate-800">Flight Info</h2>
-          <button className="edit-button" onClick={() => setEditState({ ...editState, flight: !editState.flight })}>
+          <button className="edit-button" onClick={() => setEditState(s => ({ ...s, flight: !s.flight }))}>
             {editState.flight ? "Save" : "Edit"}
           </button>
         </div>
         {editState.flight ? (
-          <textarea value={trip.flightInfo} onChange={(e) => handleInputChange("flightInfo", e.target.value)} className="mt-2 p-2 w-full border rounded" />
+          <textarea
+            value={trip.flightInfo}
+            onChange={e => handleInputChange("flightInfo", e.target.value)}
+            className="mt-2 p-2 w-full border rounded"
+          />
         ) : (
           <p className="mt-2 text-slate-700">{trip.flightInfo}</p>
         )}
@@ -274,7 +291,7 @@ const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
       <section className="trip-section">
         <div className="flex justify-between items-center mb-2">
           <h2 className="text-2xl font-semibold text-slate-800">Itinerary</h2>
-          <button className="edit-button" onClick={() => setEditState({ ...editState, itinerary: !editState.itinerary })}>
+          <button className="edit-button" onClick={() => setEditState(s => ({ ...s, itinerary: !s.itinerary }))}>
             {editState.itinerary ? "Save" : "Edit"}
           </button>
         </div>
@@ -282,11 +299,34 @@ const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
           <>
             {trip.itinerary.map((item, idx) => (
               <div key={idx} className="mb-4 border rounded p-4 bg-white shadow-sm">
-                <input type="text" value={item.day} onChange={(e) => handleItineraryChange(idx, "day", e.target.value)} className="font-semibold text-lg w-full p-2 border rounded mb-2" placeholder="Day Title" />
-                <textarea placeholder="Morning Plans..." value={item.morning || ""} onChange={(e) => handleItineraryChange(idx, "morning", e.target.value)} className="p-2 w-full border rounded mb-2" />
-                <textarea placeholder="Afternoon Plans..." value={item.afternoon || ""} onChange={(e) => handleItineraryChange(idx, "afternoon", e.target.value)} className="p-2 w-full border rounded mb-2" />
-                <textarea placeholder="Evening Plans..." value={item.evening || ""} onChange={(e) => handleItineraryChange(idx, "evening", e.target.value)} className="p-2 w-full border rounded" />
-                <button onClick={() => removeItineraryDay(idx)} className="edit-button text-red-500" style={{ marginLeft: '10px' }}>Remove Day</button>
+                <input
+                  type="text"
+                  value={item.day}
+                  onChange={e => handleItineraryChange(idx, "day", e.target.value)}
+                  className="font-semibold text-lg w-full p-2 border rounded mb-2"
+                  placeholder="Day Title"
+                />
+                <textarea
+                  placeholder="Morning Plans..."
+                  value={item.morning || ""}
+                  onChange={e => handleItineraryChange(idx, "morning", e.target.value)}
+                  className="p-2 w-full border rounded mb-2"
+                />
+                <textarea
+                  placeholder="Afternoon Plans..."
+                  value={item.afternoon || ""}
+                  onChange={e => handleItineraryChange(idx, "afternoon", e.target.value)}
+                  className="p-2 w-full border rounded mb-2"
+                />
+                <textarea
+                  placeholder="Evening Plans..."
+                  value={item.evening || ""}
+                  onChange={e => handleItineraryChange(idx, "evening", e.target.value)}
+                  className="p-2 w-full border rounded"
+                />
+                <button onClick={() => removeItineraryDay(idx)} className="edit-button text-red-500" style={{ marginLeft: '10px' }}>
+                  Remove Day
+                </button>
               </div>
             ))}
             <button onClick={addItineraryDay} className="edit-button mt-2 text-green-500">+ Add Day</button>
@@ -307,12 +347,16 @@ const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
       <section className="trip-section border p-4 rounded-xl bg-slate-50 shadow">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-semibold text-slate-800">Journal</h2>
-          <button className="edit-button" onClick={() => setEditState({ ...editState, journal: !editState.journal })}>
+          <button className="edit-button" onClick={() => setEditState(s => ({ ...s, journal: !s.journal }))}>
             {editState.journal ? "Save" : "Edit"}
           </button>
         </div>
         {editState.journal ? (
-          <textarea value={trip.journal} onChange={(e) => handleInputChange("journal", e.target.value)} className="mt-2 p-2 w-full h-40 border rounded" />
+          <textarea
+            value={trip.journal}
+            onChange={e => handleInputChange("journal", e.target.value)}
+            className="mt-2 p-2 w-full h-40 border rounded"
+          />
         ) : (
           <p className="mt-2 text-slate-700 whitespace-pre-wrap">{trip.journal}</p>
         )}
@@ -322,31 +366,43 @@ const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
       <section className="trip-section">
         <div className="flex justify-between items-center mb-2">
           <h2 className="text-2xl font-semibold text-slate-800">Trip Photos</h2>
-          <button className="edit-button" onClick={() => setEditState({ ...editState, tripPhotos: !editState.tripPhotos })}>
+          <button className="edit-button" onClick={() => setEditState(s => ({ ...s, tripPhotos: !s.tripPhotos }))}>
             {editState.tripPhotos ? "Save" : "Edit"}
           </button>
         </div>
-        {editState.tripPhotos && (
+        {editState.tripPhotos ? (
           <>
-            {trip.tripPhotos && trip.tripPhotos.map((photo, index) => (
-              <div key={index} className="photo-container flex items-center gap-4 mt-2">
-                {photo && <img src={photo} alt={`Trip ${index}`} className="w-32 h-24 object-cover rounded shadow preview-image" />}
+            {(trip.tripPhotos || []).map((photo, idx) => (
+              <div key={idx} className="photo-container flex items-center gap-4 mt-2">
+                {photo && (
+                  <img
+                    src={getServeUrl(photo)}
+                    alt={`Trip ${idx}`}
+                    className="w-32 h-24 object-cover rounded shadow preview-image"
+                  />
+                )}
                 <label className="file-upload-label">
                   Choose Photo
-                  <input type="file" accept="image/*" onChange={(e) => handleTripPhotoUpload(e, index)} />
+                  <input type="file" accept="image/*" onChange={e => handleTripPhotoUpload(e, idx)} />
                 </label>
-                <button onClick={() => removePhotoBox(index)} className="circle-remove-btn">-</button>
+                <button onClick={() => removePhotoBox(idx)} className="circle-remove-btn">-</button>
               </div>
             ))}
             <button onClick={addPhotoBox} className="add-photo-btn">+ Add Trip Photo</button>
           </>
-        )}
-        {!editState.tripPhotos && trip.tripPhotos && trip.tripPhotos.length > 0 && (
-          <div className="grid grid-cols-2 gap-4 mt-4">
-            {trip.tripPhotos.map((photo, index) => (
-              <img key={index} src={photo} alt={`Trip ${index}`} className="w-full h-40 object-cover rounded-xl shadow" />
-            ))}
-          </div>
+        ) : (
+          trip.tripPhotos && trip.tripPhotos.length > 0 && (
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              {trip.tripPhotos.map((photo, idx) => (
+                <img
+                  key={idx}
+                  src={getServeUrl(photo)}
+                  alt={`Trip ${idx}`}
+                  className="w-full h-40 object-cover rounded-xl shadow"
+                />
+              ))}
+            </div>
+          )
         )}
       </section>
 

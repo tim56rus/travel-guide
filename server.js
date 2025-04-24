@@ -72,8 +72,8 @@ app.delete("/api/MyTrips/tripDelete", tripDeleteAPI);
 const tripUpdateAPI = require("./backend/tripUpdate");
 app.put("/api/MyTrips/tripUpdate", tripUpdateAPI);
 
-const filterByDateAPI = require("./backend/filterByDate");
-app.get("/api/trips", filterByDateAPI);
+const servePhotosAPI = require("./backend/servePhotos");
+app.get("/api/servePhotos/:userId/:photoName", servePhotosAPI);
 
 //Need for accessing the uploads for display
 
