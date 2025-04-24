@@ -21,6 +21,7 @@ app.use(
 );
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/uploads', express.static(path.join(__dirname, 'backend/uploads')));
 // set up CORS headers
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -69,7 +70,8 @@ app.delete("/api/account/delete", accountDeleteAPI);
 //app.delete("/api/MyTrips/tripDelete", tripDeleteAPI);
 
 //Need for accessing the uploads for display
-app.use('/uploads', express.static('/opt/bitnami/projects/travel-guide/backend/uploads'));
+
+
 
 const {
   listFiles,
