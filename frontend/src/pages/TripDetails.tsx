@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../css/TripDetails.css';
-
 import MapView from '../components/MapView';
-
-
 
 type ItineraryItem = {
   day: string;
@@ -22,7 +19,7 @@ type TripDetailsType = {
   flightInfo: string;
   itinerary: ItineraryItem[];
   journal: string;
-  image?: string;
+  coverPhoto?: string;
   tripPhotos?: string[];
 };
 
@@ -38,7 +35,7 @@ const TripDetails: React.FC = () => {
     flight: false,
     journal: false,
     itinerary: false,
-    image: false,
+    coverPhoto: false,
     tripPhotos: false,
   });
 
@@ -67,9 +64,9 @@ const TripDetails: React.FC = () => {
 
   const handleItineraryChange = (index: number, field: keyof ItineraryItem, value: string) => {
     if (!trip) return;
-    const updatedItinerary = [...trip.itinerary];
-    updatedItinerary[index][field] = value;
-    setTrip({ ...trip, itinerary: updatedItinerary });
+    const updated = [...trip.itinerary];
+    updated[index][field] = value;
+    setTrip({ ...trip, itinerary: updated });
   };
 
   const addItineraryDay = () => {
@@ -79,14 +76,14 @@ const TripDetails: React.FC = () => {
 
   const removeItineraryDay = (index: number) => {
     if (!trip) return;
-    const updatedItinerary = trip.itinerary.filter((_, idx) => idx !== index);
-    setTrip({ ...trip, itinerary: updatedItinerary });
+    const updated = trip.itinerary.filter((_, i) => i !== index);
+    setTrip({ ...trip, itinerary: updated });
   };
 
   const handleCoverUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!trip || !e.target.files || e.target.files.length === 0) return;
-    const file = URL.createObjectURL(e.target.files[0]);
-    setTrip({ ...trip, image: file });
+    if (!trip || !e.target.files?.length) return;
+    const url = URL.createObjectURL(e.target.files[0]);
+    setTrip({ ...trip, coverPhoto: url });
   };
 
   const addPhotoBox = () => {
@@ -95,17 +92,47 @@ const TripDetails: React.FC = () => {
   };
 
   const removePhotoBox = (index: number) => {
-    if (!trip || !trip.tripPhotos) return;
-    const updatedPhotos = trip.tripPhotos.filter((_, idx) => idx !== index);
-    setTrip({ ...trip, tripPhotos: updatedPhotos });
+    if (!trip?.tripPhotos) return;
+    const updated = trip.tripPhotos.filter((_, i) => i !== index);
+    setTrip({ ...trip, tripPhotos: updated });
   };
 
   const handleTripPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    if (!trip || !e.target.files || e.target.files.length === 0 || !trip.tripPhotos) return;
-    const file = URL.createObjectURL(e.target.files[0]);
-    const updatedPhotos = [...trip.tripPhotos];
-    updatedPhotos[index] = file;
-    setTrip({ ...trip, tripPhotos: updatedPhotos });
+    if (!trip?.tripPhotos || !e.target.files?.length) return;
+    const url = URL.createObjectURL(e.target.files[0]);
+    const updated = [...trip.tripPhotos];
+    updated[index] = url;
+    setTrip({ ...trip, tripPhotos: updated });
+  };
+
+  const handleSaveAndBack = async () => {
+    if (!trip) {
+      navigate(-1);
+      return;
+    }
+    try {
+      await fetch('/api/MyTrips/tripUpdate', {
+        method: 'PUT',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: trip._id,
+          name: trip.name,
+          location: trip.location,
+          startDate: trip.startDate,
+          endDate: trip.endDate,
+          flightInfo: trip.flightInfo,
+          journal: trip.journal,
+          image: trip.coverPhoto,
+          tripPhotos: trip.tripPhotos,
+          itinerary: trip.itinerary,
+        }),
+      });
+    } catch (err) {
+      console.error('Failed to save trip:', err);
+    } finally {
+      navigate(-1);
+    }
   };
 
   if (loading) return <div>Loading...</div>;
@@ -113,28 +140,30 @@ const TripDetails: React.FC = () => {
 
   return (
     <div className="trip-container max-w-5xl mx-auto p-6 rounded-xl shadow space-y-8" style={{ backgroundColor: '#F6F1DE' }}>
-      <button onClick={() => navigate(-1)} className="back-button">← Back</button>
+      <button onClick={handleSaveAndBack} className="back-button">← Back</button>
 
       {/* Trip Information */}
       <section className="trip-section">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-semibold text-slate-800">Trip Information</h2>
-          <button className="edit-button" onClick={() => setEditState({ ...editState, name: !editState.name })}>
+          <button className="edit-button" onClick={() => setEditState(s => ({ ...s, name: !s.name }))}>
             {editState.name ? "Save" : "Edit"}
           </button>
         </div>
         {editState.name ? (
           <>
-            <input value={trip.name} onChange={(e) => handleInputChange("name", e.target.value)} className="mt-2 p-2 w-full border rounded" />
+            <input value={trip.name} onChange={e => handleInputChange("name", e.target.value)} className="mt-2 p-2 w-full border rounded" />
             <div className="flex gap-2 mt-2">
-              <input type="date" value={trip.startDate} onChange={(e) => handleInputChange("startDate", e.target.value)} className="p-2 w-1/2 border rounded" />
-              <input type="date" value={trip.endDate} onChange={(e) => handleInputChange("endDate", e.target.value)} className="p-2 w-1/2 border rounded" />
+              <input type="date" value={trip.startDate} onChange={e => handleInputChange("startDate", e.target.value)} className="p-2 w-1/2 border rounded" />
+              <input type="date" value={trip.endDate} onChange={e => handleInputChange("endDate", e.target.value)} className="p-2 w-1/2 border rounded" />
             </div>
           </>
         ) : (
           <>
             <p className="mt-2 text-lg text-slate-700">{trip.name}</p>
-            <p className="text-sm text-slate-500">Dates: {new Date(trip.startDate).toDateString()} - {new Date(trip.endDate).toDateString()}</p>
+            <p className="text-sm text-slate-500">
+              Dates: {new Date(trip.startDate).toDateString()} - {new Date(trip.endDate).toDateString()}
+            </p>
           </>
         )}
       </section>
@@ -143,12 +172,12 @@ const TripDetails: React.FC = () => {
       <section className="trip-section">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-semibold text-slate-800">Location</h2>
-          <button className="edit-button" onClick={() => setEditState({ ...editState, location: !editState.location })}>
+          <button className="edit-button" onClick={() => setEditState(s => ({ ...s, location: !s.location }))}>
             {editState.location ? "Save" : "Edit"}
           </button>
         </div>
         {editState.location ? (
-          <input value={trip.location} onChange={(e) => handleInputChange("location", e.target.value)} className="mt-2 p-2 w-full border rounded" />
+          <input value={trip.location} onChange={e => handleInputChange("location", e.target.value)} className="mt-2 p-2 w-full border rounded" />
         ) : (
           <p className="mt-2 text-slate-700">{trip.location}</p>
         )}
@@ -158,21 +187,21 @@ const TripDetails: React.FC = () => {
       <section className="trip-section border p-4 rounded-xl bg-slate-50 shadow">
         <div className="flex justify-between items-center mb-2">
           <h2 className="text-2xl font-semibold text-slate-800">Cover Photo</h2>
-          <button className="edit-button" onClick={() => setEditState({ ...editState, image: !editState.image })}>
-            {editState.image ? "Save" : "Edit"}
+          <button className="edit-button" onClick={() => setEditState(s => ({ ...s, coverPhoto: !s.coverPhoto }))}>
+            {editState.coverPhoto ? "Save" : "Edit"}
           </button>
         </div>
-        {editState.image ? (
+        {editState.coverPhoto ? (
           <>
-            {trip.image && <img src={trip.image} alt="Cover" className="w-full h-64 object-cover rounded-xl shadow mb-2" />}
+            {trip.coverPhoto && <img src={trip.coverPhoto} alt="Cover" className="w-full h-64 object-cover rounded-xl shadow mb-2" />}
             <label className="file-upload-label">
               Choose Cover Photo
               <input type="file" accept="image/*" onChange={handleCoverUpload} />
             </label>
-            {trip.image && <button onClick={() => handleInputChange('image', '')} className="remove-day-btn mt-2">Remove Cover Photo</button>}
+            {trip.coverPhoto && <button onClick={() => handleInputChange('coverPhoto', '')} className="remove-day-btn mt-2">Remove Cover Photo</button>}
           </>
         ) : (
-          trip.image && <img src={trip.image} alt={trip.name} className="w-full h-64 object-cover rounded-xl shadow" />
+          trip.coverPhoto && <img src={trip.coverPhoto} alt={trip.name} className="w-full h-64 object-cover rounded-xl shadow" />
         )}
       </section>
 
