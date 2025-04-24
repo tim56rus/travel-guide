@@ -130,7 +130,7 @@ export default function TripCard({ trip, onTripsLoaded }: TripCardProps) {
         className="card-body"
         style={{
           flex: "1 0 0",
-          backgroundColor: "white",
+          backgroundColor: "#ACD3A8",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
