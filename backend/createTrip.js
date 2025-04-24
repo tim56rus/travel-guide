@@ -1,57 +1,66 @@
 // backend/createTrip.js
 
-const db = require('./connectdb'); // adjust path to your MongoDB connection module
+const { ObjectId } = require('mongodb');
+const fs = require('fs');
+const path = require('path');
+const db = require('./connectdb');
+const { upload } = require('./fileManagement');
 
-/**
- * Handler for POST /api/createTrip
- * Creates a new trip document for the authenticated user.
- */
-module.exports = async (req, res) => {
-  try {
-    // Ensure the user is authenticated via session
-    const ownerId = req.session.userId;
-    if (!ownerId) {
-      return res.status(401).json({ error: 'Not authenticated' });
+// POST /api/createTrip
+const createTrip = [
+  upload.fields([
+    { name: 'coverPhoto', maxCount: 1 },
+    { name: 'photos', maxCount: 10 }
+  ]),
+  async (req, res) => {
+    try {
+      const userId = req.session.userId;
+      if (!userId) return res.status(401).json({ error: 'User not authenticated' });
+
+      const userObjectId = new ObjectId(userId);
+      const {
+        name,
+        location,
+        startDate,
+        endDate,
+        flightInfo,
+        journal,
+        itinerary
+      } = req.body;
+
+      if (!name || !startDate || !endDate) {
+        return res.status(400).json({ error: 'Missing required fields' });
+      }
+
+      const coverPhoto = req.files?.['coverPhoto']?.[0]?.filename || null;
+      const photos = req.files?.['photos']?.map(file => file.filename) || [];
+
+      const baseUrl = `https://lp.poosdisfun.xyz/uploads/${userId}/`;
+      const coverPhotoUrl = coverPhoto ? baseUrl + coverPhoto : null;
+      const photoUrls = photos.map(filename => baseUrl + filename);
+
+      const trip = {
+        userId: userObjectId,
+        name,
+        location,
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
+        flightInfo,
+        journal,
+        itinerary,
+        coverPhoto: coverPhotoUrl,
+        photos: photoUrls,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+
+      const result = await db.collection('Trips').insertOne(trip);
+      res.status(201).json({ ...trip, _id: result.insertedId });
+    } catch (err) {
+      console.error('Trip creation error:', err);
+      res.status(500).json({ error: 'Failed to create trip' });
     }
-
-    // Destructure and validate trip data
-    const {
-      name,
-      location,
-      startDate,
-      endDate,
-      flightInfo,
-      journal,
-      coverPhoto,
-      tripPhotos,
-      itinerary,
-    } = req.body;
-    if (!name || !startDate || !endDate) {
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
-
-    // Build the trip document
-    const tripDoc = {
-      owner: ownerId,
-      name,
-      location,
-      startDate: new Date(startDate),
-      endDate: new Date(endDate),
-      flightInfo,
-      journal,
-      coverPhoto,
-      tripPhotos,
-      itinerary,
-      createdAt: new Date(),
-    };
-
-    // Insert into the Trips collection
-    const { insertedId } = await db.collection('Trips').insertOne(tripDoc);
-
-    // Respond with the new trip ID
-    res.status(201).json({ tripId: insertedId });
-  } catch (err) {
-    console.error('Error creating trip:', err);
-    res.status(500).json({ error: 'Internal server error' });
   }
-};
+];
+
+module.exports = createTrip;
