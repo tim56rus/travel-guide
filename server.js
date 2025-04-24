@@ -69,7 +69,7 @@ app.delete("/api/account/delete", accountDeleteAPI);
 //app.delete("/api/MyTrips/tripDelete", tripDeleteAPI);
 
 //Need for accessing the uploads for display
-app.use('/uploads', express.static(path.join(__dirname,'backend', 'uploads')));
+app.use('/uploads', express.static('/opt/bitnami/projects/travel-guide/backend/uploads'));
 
 const {
   listFiles,
