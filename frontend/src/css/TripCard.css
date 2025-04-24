@@ -58,3 +58,10 @@
     margin: 5px;
     width: 100px;
   }
+
+  .card-img-top {
+    border-radius: 10px;
+    border: 2px solid white;
+    box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 4px;
+  }
+  
