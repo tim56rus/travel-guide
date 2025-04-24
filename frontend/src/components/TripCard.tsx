@@ -7,6 +7,7 @@ interface Trip {
   name: string;
   startDate: Date;
   endDate: Date; 
+  coverPhoto?: string;
 }
 
 interface TripCardProps {
@@ -24,6 +25,16 @@ function TripCard({ trip }: TripCardProps) {
     start.toLocaleDateString("en-US", { month: "numeric", day: "numeric", year: "numeric" }) +
     " – " +
     end.toLocaleDateString("en-US", { month: "numeric", day: "numeric", year: "numeric" });
+
+  // Helper to convert upload path to serve URL
+  const getServeUrl = (uploadPath: string) => {
+    const parts = uploadPath.replace(/^\//, '').split('/');
+    const [, owner, ...rest] = parts;
+    return `/api/servePhotos/${owner}/${rest.join('/')}`;
+  };
+
+  const imageUrl = trip.coverPhoto ? getServeUrl(trip.coverPhoto) : "./WanderImg.png";
+
 
 	const handleDelete = async () => {
 	try {
@@ -89,8 +100,8 @@ function TripCard({ trip }: TripCardProps) {
       {/* img part of card */}
       <div style={{ flex: '2 0 0' }}>
         <img className="card-img-top"
-          src="./WanderImg.png"
-          alt="Default card image"
+          src={imageUrl}
+          alt="Trip Cover"
           style={{
             width: '200px',
             height: '180px',
