@@ -11,6 +11,31 @@ const MyTripsPage: React.FC = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  const [trips, setTrips] = useState<any[]>([]); // ideally use a typed `Trip[]`
+  //const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    const fetchTrips = async () => {
+      try {
+        const res = await fetch("/api/trips", { credentials: "include" });
+        const json = await res.json();
+        if (res.ok && json.data) {
+          setTrips(json.data); // assuming your API returns { data: Trip[] }
+        } else {
+          console.error("Failed to fetch trips");
+        }
+      } catch (err) {
+        console.error("Error fetching trips:", err);
+      }
+    };
+
+    fetchTrips();
+  }, []);
+
+  // const filteredTrips = trips.filter(trip =>
+  //   trip.name.toLowerCase().includes(searchTerm.toLowerCase())
+  // ); for filtering later 
+
   // Session check on mount
   useEffect(() => {
     (async () => {
@@ -65,7 +90,7 @@ const MyTripsPage: React.FC = () => {
 
         <SearchTrips />
         <FilterTrips />
-        <TripsGrid onAddTrip={() => setShowPopup(true)} />
+        <TripsGrid trips={trips} onAddTrip={() => setShowPopup(true)} />
         {showPopup && <PlanTrip onClose={() => setShowPopup(false)} />}
       </div>
     </div>

@@ -2,9 +2,28 @@ import '../css/TripCard.css';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
-function TripCard() {
+interface Trip {
+  _id: string;
+  name: string;
+  startDate: Date;
+  endDate: Date; 
+}
+
+interface TripCardProps {
+  trip: Trip;
+}
+
+function TripCard({ trip }: TripCardProps) {
   const navigate = useNavigate();
   const [showConfirm, setShowConfirm] = useState(false);
+
+  const start = new Date(trip.startDate);
+  const end = new Date(trip.endDate);
+
+  const formattedDateRange =
+    start.toLocaleDateString("en-US", { month: "numeric", day: "numeric" }) +
+    " – " +
+    end.toLocaleDateString("en-US", { month: "numeric", day: "numeric", year: "numeric" });
 
   return(
     // individual trip card 
@@ -22,7 +41,6 @@ function TripCard() {
       {/* Delete Button */}
       <button
       className="btn delete-btn btn-sm position-absolute"
-      //onClick={() => handleDelete(tripId)}
       onClick={(e) => {
         e.stopPropagation(); // prevents navigation
         setShowConfirm(true);
@@ -67,8 +85,8 @@ function TripCard() {
           padding: '5px', 
           borderTop: '1px solid #D3D3D3' 
         }}>
-          <h1 className="card-title" style={{fontSize: '20px', paddingLeft: '5px', margin: '0px'}}>Destination</h1>
-          <p className="card-text" style={{paddingLeft: '5px', margin: '0px'}}>Date</p>
+          <h1 className="card-title" style={{fontSize: '20px', paddingLeft: '5px', margin: '0px'}}>{trip.name}</h1>
+          <p className="card-text" style={{paddingLeft: '5px', margin: '0px'}}>{formattedDateRange}</p>
       </div>
     </div>
   );

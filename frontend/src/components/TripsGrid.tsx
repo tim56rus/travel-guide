@@ -1,11 +1,19 @@
 import TripCard from '../components/TripCard';
 import '../css/TripsGrid.css';
 
-interface TripsGridProps {
-  onAddTrip: () => void;
+interface Trip {
+  _id: string;
+  name: string;
+  startDate: Date;
+  endDate: Date; 
 }
 
-function TripsGrid({ onAddTrip }: TripsGridProps) {
+interface TripsGridProps {
+  onAddTrip: () => void;
+  trips: Trip[];
+}
+
+function TripsGrid({ onAddTrip, trips }: TripsGridProps) {
   return (
     <div 
       style={{
@@ -28,7 +36,9 @@ function TripsGrid({ onAddTrip }: TripsGridProps) {
         <i className="fa-solid fa-plus" style={{ fontSize: '30px', fontWeight: '1' }}></i>
         <br /> Add Trip</button>
 
-      <TripCard />
+        {trips.map((trip) => (
+          <TripCard key={trip._id} trip={trip} />
+        ))}
     </div>
   );
 }
