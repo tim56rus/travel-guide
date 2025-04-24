@@ -16,6 +16,16 @@ async function uploadToServer(file: File): Promise<string> {
   return json.path;   // backend now returns { path: "/uploads/<userId>/filename" }
 }
 
+function formatDate(dateString: string) {
+  const d = new Date(dateString);
+  return d.toLocaleDateString("en-US", {
+    month: "numeric",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC"
+  });
+}
+
 type ItineraryItem = {
   day: string;
   morning?: string;
@@ -205,8 +215,21 @@ const TripDetails: React.FC = () => {
           <>
             <p className="mt-2 text-lg text-slate-700">{trip.name}</p>
             <p className="text-sm text-slate-500">
-              Dates: {new Date(trip.startDate).toDateString()} - {new Date(trip.endDate).toDateString()}
-            </p>
+  Dates:{" "}
+  {new Date(trip.startDate).toLocaleDateString("en-US", {
+    month: "numeric",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC"
+  })}{" "}
+  –{" "}
+  {new Date(trip.endDate).toLocaleDateString("en-US", {
+    month: "numeric",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC"
+  })}
+</p>
           </>
         )}
       </section>

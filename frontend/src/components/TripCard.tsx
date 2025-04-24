@@ -26,12 +26,14 @@ function TripCard({ trip }: TripCardProps) {
       month: "numeric",
       day: "numeric",
       year: "numeric",
+	  timeZone: "UTC"
     }) +
     " – " +
     end.toLocaleDateString("en-US", {
       month: "numeric",
       day: "numeric",
       year: "numeric",
+	  timeZone: "UTC"
     });
 
   // Helper to convert upload path to serve URL
