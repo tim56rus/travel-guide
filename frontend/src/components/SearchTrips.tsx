@@ -1,29 +1,73 @@
-import { useState, useEffect, useRef } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  KeyboardEvent,
+  ChangeEvent,
+} from 'react';
 
-function SearchTrips() {
-  const [query, setQuery] = useState('');
+type SearchTripsProps = {
+  onSearch: (results: any[]) => void;
+};
+
+const categories = [
+  { label: 'Name',     value: 'name'     },
+  { label: 'Location', value: 'location' },
+  { label: 'Journal',  value: 'journal'  },
+  { label: 'Dates',    value: 'dates'    },
+];
+
+export default function SearchTrips({ onSearch }: SearchTripsProps) {
+  const [query, setQuery]                   = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [category, setCategory]             = useState<string>('');
+  const containerRef                        = useRef<HTMLDivElement>(null);
 
-  const categories = ['Notes', 'Places', 'Dates'];
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setQuery(value);
-    setShowSuggestions(value.trim().length > 0);
-  };
-
-  // Hide suggestions if clicked outside
+  // Hide suggestions when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setShowSuggestions(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  const performSearch = async (by = category) => {
+    // Build query params dynamically
+    const params = new URLSearchParams();
+    if (by) {
+      params.append('by', by);
+    }
+    if (query.trim()) {
+      params.append('q', query.trim());
+    }
+
+    const url = '/api/searchTrips' + (params.toString() ? `?${params.toString()}` : '');
+    try {
+      const res = await fetch(url, { credentials: 'include' });
+      const json = await res.json();
+      onSearch(json.data || []);
+    } catch (err) {
+      console.error('Search failed:', err);
+      onSearch([]);
+    }
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setQuery(value);
+    setShowSuggestions(value.trim().length > 0);
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      setShowSuggestions(false);
+      performSearch();
+    }
+  };
 
   return (
     <div
@@ -33,7 +77,7 @@ function SearchTrips() {
         display: 'flex',
         justifyContent: 'center',
         fontFamily: 'Montserrat',
-        padding: '0 1rem'
+        padding: '0 1rem',
       }}
     >
       <div style={{ position: 'relative', width: '100%', maxWidth: '400px' }}>
@@ -44,19 +88,23 @@ function SearchTrips() {
           aria-label="Search"
           value={query}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
           maxLength={50}
           style={{
             paddingRight: '2rem',
             width: '100%',
             zIndex: 2,
-            position: 'relative'
+            position: 'relative',
           }}
         />
-        {/* Search Icon */}
         <button
           type="button"
+          onClick={() => {
+            setShowSuggestions(false);
+            performSearch();
+          }}
           style={{
-            all: 'unset', 
+            all: 'unset',
             position: 'absolute',
             right: '10px',
             top: '50%',
@@ -68,7 +116,6 @@ function SearchTrips() {
           <i className="fas fa-search" style={{ color: 'gray' }} />
         </button>
 
-        {/* Suggestions Dropdown */}
         {showSuggestions && (
           <div
             className="list-group"
@@ -82,26 +129,36 @@ function SearchTrips() {
               border: '1px solid #ddd',
               borderTop: 'none',
               borderRadius: '0 0 8px 8px',
-              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', 
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
               cursor: 'pointer',
             }}
           >
-            {categories.map((category) => (
+            {categories.map((cat) => (
               <div
-                key={category}
+                key={cat.value}
                 className="list-group-item list-group-item-action"
+                onClick={() => {
+                  setCategory(cat.value);
+                  setShowSuggestions(false);
+                  performSearch(cat.value);
+                }}
               >
-                <span style={{ fontWeight: 500 }}>"{query}"</span> in {category}
+                <span style={{ fontWeight: 500 }}>"{query.trim()}"</span> in {cat.label}
               </div>
             ))}
+            <div
+              className="list-group-item list-group-item-action"
+              onClick={() => {
+                setCategory('');
+                setShowSuggestions(false);
+                performSearch('');
+              }}
+            >
+              Search all
+            </div>
           </div>
         )}
       </div>
     </div>
   );
 }
-
-
-
-export default SearchTrips;
-
