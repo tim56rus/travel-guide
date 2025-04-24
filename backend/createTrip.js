@@ -33,14 +33,14 @@ const createTrip = [
       }
 
       const coverPhoto = req.files?.['coverPhoto']?.[0]?.filename || null;
-      const photos = req.files?.['photos']?.map(file => file.filename) || [];
+      const tripPhotos = req.files?.['tripPhotos']?.map(file => file.filename) || [];
 
       const baseUrl = `https://lp.poosdisfun.xyz/uploads/${userId}/`;
       const coverPhotoUrl = coverPhoto ? baseUrl + coverPhoto : null;
-      const photoUrls = photos.map(filename => baseUrl + filename);
+      const photoUrls = tripPhotos.map(filename => baseUrl + filename);
 
       const trip = {
-        userId: userObjectId,
+        owner: userId,
         name,
         location,
         startDate: new Date(startDate),
@@ -49,7 +49,7 @@ const createTrip = [
         journal,
         itinerary,
         coverPhoto: coverPhotoUrl,
-        photos: photoUrls,
+        tripPhotos: photoUrls,
         createdAt: new Date(),
         updatedAt: new Date()
       };
