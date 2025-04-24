@@ -6,6 +6,8 @@ import React, {
   ChangeEvent,
 } from 'react';
 
+import '../css/SearchTrips.css';
+
 type SearchTripsProps = {
   onSearch: (results: any[]) => void;
 };
@@ -99,6 +101,7 @@ export default function SearchTrips({ onSearch }: SearchTripsProps) {
         />
         <button
           type="button"
+          className="search-button-animated"
           onClick={() => {
             setShowSuggestions(false);
             performSearch();

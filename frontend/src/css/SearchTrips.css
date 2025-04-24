@@ -1,0 +1,32 @@
+.search-button-animated {
+    all: unset;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border-radius: 50%;
+    padding: 6px;
+    transition: box-shadow 0.2s ease, transform 0.1s ease;
+  }
+  
+  .search-button-animated i {
+    color: gray;
+    font-size: 1rem;
+  }
+  
+  .search-button-animated:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    background-color: #f0f0f0;
+  }
+  
+  .search-button-animated:active {
+    transform: translateY(-50%) scale(0.95);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+  
