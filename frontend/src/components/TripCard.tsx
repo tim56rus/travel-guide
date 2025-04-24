@@ -25,6 +25,29 @@ function TripCard({ trip }: TripCardProps) {
     " – " +
     end.toLocaleDateString("en-US", { month: "numeric", day: "numeric", year: "numeric" });
 
+    const handleDelete = async () => {
+      try {
+        const res = await fetch(`/api/trips/${trip._id}`, {
+          method: 'DELETE',
+          credentials: 'include', // important for session auth
+        });
+    
+        if (res.ok) {
+          // Option 1: Refresh the page
+          window.location.reload();
+    
+          // Option 2 (better): Use a prop to notify parent and remove the trip from state
+          // onTripDeleted(trip._id);
+        } else {
+          const errorData = await res.json();
+          alert(`Failed to delete trip: ${errorData.error}`);
+        }
+      } catch (error) {
+        console.error('Error deleting trip:', error);
+        alert('An error occurred while deleting the trip.');
+      }
+    };
+
   return(
     // individual trip card 
     <div className="card overflow-hidden position-relative"
@@ -56,7 +79,7 @@ function TripCard({ trip }: TripCardProps) {
           onClick={(e) => e.stopPropagation()} 
         >
           <p>Delete this trip?</p>
-          <button className="btn delete-confirm btn-danger btn-sm">Yes</button>
+          <button className="btn delete-confirm btn-danger btn-sm"  onClick={handleDelete}>Yes</button>
           <button  className="btn delete-confirm btn-secondary btn-sm" onClick={() => setShowConfirm(false)}>No</button>
         </div>
       )}
