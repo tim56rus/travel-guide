@@ -120,12 +120,49 @@ function Account() {
     setShowDeleteConfirm(true);
   };
 
-  const confirmDeleteAccount = () => {
-    setDeleted(true);
-    setShowDeleteConfirm(false);
-    setError("");
-    setSuccess("");
+ 
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/logout", {
+        method: "POST",
+        credentials: "include"
+      });
+      localStorage.removeItem("user>data"); 
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
+  
+  const confirmDeleteAccount = async () => {
+  try {
+    // 1) delete the account
+    const res = await fetch("/api/account/delete", {
+      method: "DELETE",
+      credentials: "include",
+    });
+    const { error: errMsg, success: successMsg } = await res.json();
+    if (errMsg) {
+      setError(errMsg);
+      return;
+    }
+
+    // 2) clear localStorage
+    localStorage.removeItem("user>data");
+
+    // 3) destroy the session on the server
+    await fetch("/api/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+
+    // 4) redirect to login
+    navigate("/login", { replace: true });
+  } catch (e) {
+    console.error("Delete failed:", e);
+    setError("Could not delete account. Try again.");
+  }
+};
 
   const cancelDeleteAccount = () => {
     setShowDeleteConfirm(false);

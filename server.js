@@ -62,6 +62,8 @@ app.post("/api/logout", logoutAPI);
 const createTripAPI = require("./backend/createTrip");
 app.post("/api/createTrip", createTripAPI);
 
+const accountDeleteAPI = require("./backend/accountDelete");
+app.delete("/api/account/delete", accountDeleteAPI);
 
 //Need for accessing the uploads for display
 app.use('/uploads', express.static(path.join(__dirname,'backend', 'uploads')));
