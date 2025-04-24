@@ -155,21 +155,36 @@ const TripDetails: React.FC = () => {
           </button>
         </div>
         {editState.name ? (
-          <>
-            <input value={trip.name} onChange={e => handleInputChange("name", e.target.value)} className="mt-2 p-2 w-full border rounded" />
-            <div className="flex gap-2 mt-2">
-              <input type="date" value={trip.startDate} onChange={e => handleInputChange("startDate", e.target.value)} className="p-2 w-1/2 border rounded" />
-              <input type="date" value={trip.endDate} onChange={e => handleInputChange("endDate", e.target.value)} className="p-2 w-1/2 border rounded" />
-            </div>
-          </>
-        ) : (
-          <>
-            <p className="mt-2 text-lg text-slate-700">{trip.name}</p>
-            <p className="text-sm text-slate-500">
-              Dates: {toUTCDateString(trip.startDate)} - {toUTCDateString(trip.endDate)}
-            </p>
-          </>
-        )}
+  <>
+    <input
+      value={trip.name}
+      onChange={e => handleInputChange("name", e.target.value)}
+      className="mt-2 p-2 w-full border rounded"
+    />
+    <div className="flex gap-2 mt-2">
+      <input
+        type="date"
+        value={trip.startDate ? trip.startDate.slice(0, 10) : ''}
+        onChange={e => handleInputChange("startDate", e.target.value)}
+        className="p-2 w-1/2 border rounded"
+      />
+      <input
+        type="date"
+        value={trip.endDate ? trip.endDate.slice(0, 10) : ''}
+        onChange={e => handleInputChange("endDate", e.target.value)}
+        className="p-2 w-1/2 border rounded"
+      />
+    </div>
+  </>
+) : (
+  <>
+    <p className="mt-2 text-lg text-slate-700">{trip.name}</p>
+    <p className="text-sm text-slate-500">
+      Dates: {new Date(trip.startDate).toLocaleDateString('en-CA', { timeZone: 'UTC' })} - {new Date(trip.endDate).toLocaleDateString('en-CA', { timeZone: 'UTC' })}
+    </p>
+  </>
+)}
+
       </section>
 
       {/* Location */}
