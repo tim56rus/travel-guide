@@ -37,6 +37,9 @@ app.use((req, res, next) => {
 });
 
 // ======= API Endpoints ======= //
+app.get('/test-image', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'backend/uploads/67fade29e11b10786d794bc4/1745464133685-relicui.png'));
+});
 
 // Each first line is the handler and second line is the actual api endpoint
 const loginAPI = require("./backend/login");
