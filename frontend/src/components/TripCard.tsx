@@ -81,7 +81,7 @@ export default function TripCard({ trip, onTripsLoaded }: TripCardProps) {
       style={{
         display: "flex",
         flexDirection: "column",
-        borderRadius: "5px",
+        borderRadius: "10px",
         width: "200px",
         height: "250px",
         fontFamily: "Montserrat",
