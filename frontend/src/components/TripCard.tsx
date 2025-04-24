@@ -25,12 +25,14 @@ function TripCard({ trip }: TripCardProps) {
     " – " +
     end.toLocaleDateString("en-US", { month: "numeric", day: "numeric", year: "numeric" });
 
-    const handleDelete = async () => {
-      try {
-        const res = await fetch(`/api/trips/${trip._id}`, {
-          method: 'DELETE',
-          credentials: 'include', // important for session auth
-        });
+	const handleDelete = async () => {
+	try {
+		const res = await fetch("/api/MyTrips/tripDelete", {
+		  method: "DELETE",
+		  credentials: "include",
+		  headers: { "Content-Type": "application/json" },
+		  body: JSON.stringify({ id: trip._id }),
+		});
     
         if (res.ok) {
           // Option 1: Refresh the page
