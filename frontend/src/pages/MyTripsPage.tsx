@@ -12,7 +12,7 @@ const MyTripsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   const [trips, setTrips] = useState<any[]>([]); // ideally use a typed `Trip[]`
-  //const [searchTerm, setSearchTerm] = useState("");
+  const [filteredTrips, setFilteredTrips] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchTrips = async () => {
@@ -88,9 +88,10 @@ const MyTripsPage: React.FC = () => {
           My Trips
         </h1>
 
-        <SearchTrips />
+        <SearchTrips onSearch={(results) => setFilteredTrips(results)} />
         <FilterTrips />
-        <TripsGrid trips={trips} onAddTrip={() => setShowPopup(true)} />
+        <TripsGrid trips={filteredTrips.length > 0 ? filteredTrips : trips}
+          onAddTrip={() => setShowPopup(true)} />
         {showPopup && <PlanTrip onClose={() => setShowPopup(false)} />}
       </div>
     </div>
