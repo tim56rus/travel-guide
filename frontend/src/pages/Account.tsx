@@ -390,7 +390,7 @@ function Account() {
             style={{ fontSize: "16px", lineHeight: "1.5" }}
             onClick={handleLogout}
           >
-            Log out
+              Log out
           </button>
           <span style={{ fontSize: "20px", padding: "0 10px" }}>•</span>
           <Link
