@@ -402,7 +402,7 @@ function Account() {
           <button className="btn btn-link" onClick={handleLogout}>
             Log out
           </button>{" "}
-          <span style={{ fontSize: "20px", padding: "0 10px" }}>•</span>{" "}
+          <span style={{ fontSize: "20px", padding: "0 10px" }}>•</span>{"  "}
           <Link to="/MyTrips">Main Page</Link>
         </p>
       </div>

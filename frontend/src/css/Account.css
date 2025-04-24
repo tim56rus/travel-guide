@@ -25,3 +25,40 @@
     transform: scale(1.02);
   }
   
+
+  .profile-pic-wrapper {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .profile-pic-wrapper img {
+    transition: opacity 0.3s ease;
+  }
+  
+  /* Dim the image when hovering */
+  .profile-pic-wrapper:hover img {
+    opacity: 0.6;
+  }
+  
+  /* Show the + overlay */
+  .profile-pic-wrapper .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    background-color: rgba(0, 0, 0, 0.4);
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    opacity: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s ease;
+    border-radius: 50%;
+  }
+  
+  .profile-pic-wrapper:hover .overlay {
+    opacity: 1;
+  }

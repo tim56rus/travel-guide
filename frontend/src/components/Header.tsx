@@ -73,7 +73,7 @@ function Header() {
           />
           <ul className="dropdown-menu-custom">
             <li><a className="dropdown-item" href="/account">User Settings</a></li>
-            <li><hr className="dropdown-divider" /></li>
+            {/*<li><hr className="dropdown-divider" /></li> */}
             <li><button className="dropdown-item" onClick={handleLogout} style={{fontWeight:'bold'}}>Log Out</button></li>
           </ul>
         </div>
