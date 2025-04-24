@@ -34,15 +34,21 @@ const listFiles = (req, res) => {
 };
 
 // POST /api/upload
+// POST /api/upload
 const uploadFile = [
   upload.single('file'),
   (req, res) => {
+    console.log("🔸 uploadFile called; req.file =", req.file);
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
-    res.status(201).json({ filename: req.file.filename });
+    const userId = (req.session && req.session.userId) ? req.session.userId : "anonymous";
+    const fileUrl = `/uploads/${userId}/${req.file.filename}`;
+    console.log("🔸 saving at URL", fileUrl);
+    res.status(201).json({ path: fileUrl });
   }
 ];
+
 
 // GET /api/files/:filename
 const getFile = (req, res) => {

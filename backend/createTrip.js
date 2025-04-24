@@ -31,6 +31,15 @@ const createTrip = [
       if (!name || !startDate || !endDate) {
         return res.status(400).json({ error: 'Missing required fields' });
       }
+	  
+	  let itineraryArr = [];
+      if (itinerary) {
+        try {
+          itineraryArr = JSON.parse(itinerary);
+        } catch (e) {
+          return res.status(400).json({ error: 'Invalid itinerary format' });
+        }
+      }
 
       const coverPhoto = req.files?.['coverPhoto']?.[0]?.filename || null;
       const tripPhotos = req.files?.['tripPhotos']?.map(file => file.filename) || [];
@@ -47,7 +56,7 @@ const createTrip = [
         endDate: new Date(endDate),
         flightInfo,
         journal,
-        itinerary,
+        itinerary: itineraryArr,
         coverPhoto: coverPhotoUrl,
         tripPhotos: photoUrls,
         createdAt: new Date(),

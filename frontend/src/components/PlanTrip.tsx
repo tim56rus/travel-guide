@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, FormEvent, ChangeEvent } from "react";
 import "../css/PlanTrip.css";
 
 type ItineraryItem = {
@@ -20,48 +20,65 @@ const PlanPopup: React.FC<PlanPopupProps> = ({ onClose, onSearch }) => {
   const [endDate, setEndDate] = useState("");
   const [flightInfo, setFlightInfo] = useState("");
   const [journal, setJournal] = useState("");
-  const [coverPhoto, setCoverPhoto] = useState<string | null>(null);
-  const [tripPhotos, setTripPhotos] = useState<string[]>([]);
+
+  // 👇 Preview URL for cover photo
+  const [coverPhotoPreview, setCoverPhotoPreview] = useState<string | null>(null);
+  // 👇 Actual File object for cover photo (NEW)
+  const [coverPhotoFile, setCoverPhotoFile] = useState<File | null>(null);
+
+  // 👇 Preview URLs for trip photos
+  const [tripPhotosPreview, setTripPhotosPreview] = useState<string[]>([]);
+  // 👇 Actual File objects for trip photos (NEW)
+  const [tripPhotoFiles, setTripPhotoFiles] = useState<(File | null)[]>([]);
+
   const [itinerary, setItinerary] = useState<ItineraryItem[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  const handleCoverPhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  // 👇 Handle cover photo selection (stores both preview and file) (UPDATED)
+  const handleCoverPhotoChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
     if (file) {
-      const url = URL.createObjectURL(file);
-      setCoverPhoto(url);
+      setCoverPhotoPreview(URL.createObjectURL(file));
+      setCoverPhotoFile(file);
     }
   };
 
+  // 👇 Handle each trip-photo selection (stores both preview and file) (UPDATED)
   const handleTripPhotoChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: ChangeEvent<HTMLInputElement>,
     index: number
   ) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      const updatedPhotos = [...tripPhotos];
-      updatedPhotos[index] = url;
-      setTripPhotos(updatedPhotos);
-    }
+    const file = e.target.files?.[0] || null;
+
+    setTripPhotosPreview(prev => {
+      const updated = [...prev];
+      updated[index] = file ? URL.createObjectURL(file) : "";
+      return updated;
+    });
+
+    setTripPhotoFiles(prev => {
+      const updated = [...prev];
+      updated[index] = file;
+      return updated;
+    });
   };
 
-  const addTripPhotoBox = () => setTripPhotos([...tripPhotos, ""]);
+  // 👇 Add a new photo input slot (NEW)
+  const addTripPhotoBox = () => {
+    setTripPhotosPreview(prev => [...prev, ""]);
+    setTripPhotoFiles(prev => [...prev, null]);
+  };
+
+  // 👇 Remove a photo input slot (NEW)
   const removeTripPhotoBox = (index: number) => {
-    const updated = [...tripPhotos];
-    updated.splice(index, 1);
-    setTripPhotos(updated);
+    setTripPhotosPreview(prev => prev.filter((_, i) => i !== index));
+    setTripPhotoFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   const addItineraryDay = () => {
-    setItinerary([
-      ...itinerary,
-      {
-        day: `Day ${itinerary.length + 1}`,
-        morning: "",
-        afternoon: "",
-        evening: "",
-      },
+    setItinerary(prev => [
+      ...prev,
+      { day: `Day ${prev.length + 1}`, morning: "", afternoon: "", evening: "" },
     ]);
   };
 
@@ -70,51 +87,60 @@ const PlanPopup: React.FC<PlanPopupProps> = ({ onClose, onSearch }) => {
     key: keyof ItineraryItem,
     value: string
   ) => {
-    const updated = [...itinerary];
-    updated[index] = { ...updated[index], [key]: value };
-    setItinerary(updated);
+    setItinerary(prev => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [key]: value };
+      return updated;
+    });
   };
 
   const removeItineraryDay = (index: number) => {
-    const updated = [...itinerary];
-    updated.splice(index, 1);
-    setItinerary(updated);
+    setItinerary(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // 👇 Build FormData and send files (NEW)
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    const tripData = {
-      name: tripName,
-      location,
-      startDate,
-      endDate,
-      flightInfo,
-      journal,
-      coverPhoto,
-      tripPhotos,
-      itinerary,
-    };
+    if (!tripName || !location || !startDate || !endDate) {
+      setError("Please fill out name, location, start and end dates.");
+      return;
+    }
+
+    const form = new FormData();
+    form.append("name", tripName);
+    form.append("location", location);
+    form.append("startDate", startDate);
+    form.append("endDate", endDate);
+    form.append("flightInfo", flightInfo);
+    form.append("journal", journal);
+    form.append("itinerary", JSON.stringify(itinerary));
+
+    // 👇 Append cover photo file if present (NEW)
+    if (coverPhotoFile) {
+      form.append("coverPhoto", coverPhotoFile);
+    }
+    // 👇 Append each trip-photo file if present (NEW)
+    tripPhotoFiles.forEach(file => {
+      if (file) form.append("tripPhotos", file);
+    });
 
     try {
-      const res = await fetch('/api/createTrip', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(tripData),
+      const res = await fetch("/api/createTrip", {
+        method: "POST",
+        credentials: "include",
+        body: form,                 // 👈 no JSON.stringify, use FormData
       });
       const result = await res.json();
-
       if (!res.ok) {
-        setError(result.error || 'Failed to create trip');
+        setError(result.error || "Failed to create trip");
       } else {
-		onSearch();
+        onSearch();
         onClose();
-		
       }
     } catch (err: any) {
-      setError(err.message || 'Network error');
+      setError(err.message || "Network error");
     }
   };
 
@@ -125,14 +151,14 @@ const PlanPopup: React.FC<PlanPopupProps> = ({ onClose, onSearch }) => {
           ✕
         </button>
         <h2>Plan Your Future Trip</h2>
-		{error && <div className="error-msg">{error}</div>}
+        {error && <div className="error-msg">{error}</div>}
         <form className="trip-form" onSubmit={handleSubmit}>
           <input
             name="name"
             type="text"
             placeholder="Trip name"
             value={tripName}
-            onChange={(e) => setTripName(e.target.value)}
+            onChange={e => setTripName(e.target.value)}
             required
           />
 
@@ -141,22 +167,21 @@ const PlanPopup: React.FC<PlanPopupProps> = ({ onClose, onSearch }) => {
             type="text"
             placeholder="Location(s)"
             value={location}
-            onChange={(e) => setLocation(e.target.value)}
+            onChange={e => setLocation(e.target.value)}
             required
           />
-          
 
           <div className="flex-row">
             <input
               type="date"
               value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
+              onChange={e => setStartDate(e.target.value)}
               required
             />
             <input
               type="date"
               value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
+              onChange={e => setEndDate(e.target.value)}
               required
             />
           </div>
@@ -165,14 +190,14 @@ const PlanPopup: React.FC<PlanPopupProps> = ({ onClose, onSearch }) => {
             name="flightInfo"
             placeholder="Enter flight"
             value={flightInfo}
-            onChange={(e) => setFlightInfo(e.target.value)}
+            onChange={e => setFlightInfo(e.target.value)}
           />
 
           {/* Cover Photo */}
           <div className="cover-photo-section">
-            {coverPhoto && (
+            {coverPhotoPreview && (
               <img
-                src={coverPhoto}
+                src={coverPhotoPreview}
                 alt="Cover Preview"
                 className="cover-preview"
               />
@@ -182,7 +207,7 @@ const PlanPopup: React.FC<PlanPopupProps> = ({ onClose, onSearch }) => {
               <input
                 type="file"
                 accept="image/*"
-                onChange={handleCoverPhotoChange}
+                onChange={handleCoverPhotoChange}  // 👈 updated handler
               />
             </label>
           </div>
@@ -195,29 +220,23 @@ const PlanPopup: React.FC<PlanPopupProps> = ({ onClose, onSearch }) => {
                 <input
                   type="text"
                   value={item.day}
-                  onChange={(e) => updateItinerary(idx, "day", e.target.value)}
+                  onChange={e => updateItinerary(idx, "day", e.target.value)}
                   placeholder="Day Title"
                 />
                 <textarea
                   placeholder="Morning Plans..."
                   value={item.morning}
-                  onChange={(e) =>
-                    updateItinerary(idx, "morning", e.target.value)
-                  }
+                  onChange={e => updateItinerary(idx, "morning", e.target.value)}
                 />
                 <textarea
                   placeholder="Afternoon Plans..."
                   value={item.afternoon}
-                  onChange={(e) =>
-                    updateItinerary(idx, "afternoon", e.target.value)
-                  }
+                  onChange={e => updateItinerary(idx, "afternoon", e.target.value)}
                 />
                 <textarea
                   placeholder="Evening Plans..."
                   value={item.evening}
-                  onChange={(e) =>
-                    updateItinerary(idx, "evening", e.target.value)
-                  }
+                  onChange={e => updateItinerary(idx, "evening", e.target.value)}
                 />
                 <button
                   type="button"
@@ -243,13 +262,13 @@ const PlanPopup: React.FC<PlanPopupProps> = ({ onClose, onSearch }) => {
             name="journal"
             placeholder="Journal"
             value={journal}
-            onChange={(e) => setJournal(e.target.value)}
+            onChange={e => setJournal(e.target.value)}
           />
 
           {/* Trip Photos */}
           <div className="trip-photos-section">
             <h3>Trip Photos</h3>
-            {tripPhotos.map((photo, idx) => (
+            {tripPhotosPreview.map((photo, idx) => (
               <div key={idx} className="photo-upload-item">
                 {photo && (
                   <img
@@ -263,12 +282,12 @@ const PlanPopup: React.FC<PlanPopupProps> = ({ onClose, onSearch }) => {
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={(e) => handleTripPhotoChange(e, idx)}
+                    onChange={e => handleTripPhotoChange(e, idx)}  // 👈 updated handler
                   />
                 </label>
                 <button
                   type="button"
-                  onClick={() => removeTripPhotoBox(idx)}
+                  onClick={() => removeTripPhotoBox(idx)}          // 👈 updated handler
                   className="circle-remove-btn"
                 >
                   -
@@ -277,7 +296,7 @@ const PlanPopup: React.FC<PlanPopupProps> = ({ onClose, onSearch }) => {
             ))}
             <button
               type="button"
-              onClick={addTripPhotoBox}
+              onClick={addTripPhotoBox}                           // 👈 new handler
               className="add-photo-btn"
             >
               + Add Trip Photo

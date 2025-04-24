@@ -3,6 +3,19 @@ import { useParams, useNavigate } from 'react-router-dom';
 import '../css/TripDetails.css';
 import MapView from '../components/MapView';
 
+async function uploadToServer(file: File): Promise<string> {
+  const form = new FormData();
+  form.append("file", file);
+  const res = await fetch("/api/upload", {
+    method: "POST",
+    credentials: "include",
+    body: form,
+  });
+  if (!res.ok) throw new Error("Upload failed");
+  const json = await res.json();
+  return json.path;   // backend now returns { path: "/uploads/<userId>/filename" }
+}
+
 type ItineraryItem = {
   day: string;
   morning?: string;
@@ -80,11 +93,19 @@ const TripDetails: React.FC = () => {
     setTrip({ ...trip, itinerary: updated });
   };
 
-  const handleCoverUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!trip || !e.target.files?.length) return;
-    const url = URL.createObjectURL(e.target.files[0]);
-    setTrip({ ...trip, coverPhoto: url });
-  };
+const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  console.log("🔔 handleCoverUpload fired", e.target.files);
+  if (!e.target.files?.length) return;
+  try {
+    const url = await uploadToServer(e.target.files[0]);
+    console.log("🔔 got URL back from server:", url);
+    setTrip(trip => trip && { ...trip, coverPhoto: url });
+  } catch (err) {
+    console.error("Cover upload failed:", err);
+  }
+};
+
+
 
   const addPhotoBox = () => {
     if (!trip) return;
@@ -97,13 +118,23 @@ const TripDetails: React.FC = () => {
     setTrip({ ...trip, tripPhotos: updated });
   };
 
-  const handleTripPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    if (!trip?.tripPhotos || !e.target.files?.length) return;
-    const url = URL.createObjectURL(e.target.files[0]);
-    const updated = [...trip.tripPhotos];
-    updated[index] = url;
-    setTrip({ ...trip, tripPhotos: updated });
-  };
+  const handleTripPhotoUpload = async (
+  e: React.ChangeEvent<HTMLInputElement>,
+  index: number
+) => {
+  if (!e.target.files?.length) return;
+  try {
+    const url = await uploadToServer(e.target.files[0]);
+    setTrip(trip => {
+      if (!trip) return trip;
+      const photos = [...(trip.tripPhotos || [])];
+      photos[index] = url;
+      return { ...trip, tripPhotos: photos };
+    });
+  } catch (err) {
+    console.error("Photo upload failed:", err);
+  }
+};
 
   const handleSaveAndBack = async () => {
     if (!trip) {
@@ -123,7 +154,7 @@ const TripDetails: React.FC = () => {
           endDate: trip.endDate,
           flightInfo: trip.flightInfo,
           journal: trip.journal,
-          image: trip.coverPhoto,
+          coverPhoto: trip.coverPhoto,
           tripPhotos: trip.tripPhotos,
           itinerary: trip.itinerary,
         }),
