@@ -76,11 +76,11 @@ const MapView: React.FC<MapViewProps> = ({ location }) => {
         placeholder="Enter a city"
         style={{ padding: '0.5rem', width: '200px', marginRight: '10px' }}
       />
-      <button onClick={handleSearch} style={{ padding: '0.5rem 1rem', marginRight: '10px' }}>
+      <button onClick={handleSearch} style={{color: '#333', padding: '0.5rem 1rem', backgroundColor: '#acd3a8', border: 'none', borderRadius: '50px', fontWeight: 500 }}>
         Show on Map
       </button>
-      <button onClick={handleBackToLocation} style={{ padding: '0.5rem 1rem', backgroundColor: '#acd3a8', border: 'none', borderRadius: '50px', fontWeight: 500 }}>
-        Back to Location
+      <button onClick={handleBackToLocation} style={{color: '#333', padding: '0.5rem 1rem', backgroundColor: '#acd3a8', border: 'none', borderRadius: '50px', fontWeight: 500 }}>
+        Back to Trip Location
       </button>
       <div
         ref={mapContainerRef}
